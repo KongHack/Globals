@@ -1,0 +1,27 @@
+{
+    "name": "coercive/globals",
+    "type": "library",
+    "description": "Coercive Globals Utility",
+    "homepage": "http://coercive.fr",
+    "license": "GNU",
+    "authors": [
+        {
+            "name": "Anthony Moral",
+            "email": "contact@coercive.fr",
+            "homepage": "http://coercive.fr"
+        }
+    ],
+    "require": {
+        "php": ">=7.0"
+    },
+    "autoload": {
+        "psr-4": { "Coercive\\Utility\\Globals\\": "" }
+    },
+    "minimum-stability" : "dev",
+    "prefer-stable" : true,
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1-dev"
+        }
+    }
+}
