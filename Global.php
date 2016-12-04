@@ -173,6 +173,16 @@ class Globals {
 	}
 
 	/**
+	 * PUBLIC AUTO FILTER VAR
+	 * 
+	 * @param mixed $mVar
+	 * @return mixed
+	 */
+	public function autoFilterManualVar($mVar) {
+		return $this->_autoFilter($mVar);
+	}
+
+	/**
 	 * (DES)ACTIVATE FILTER
 	 *
 	 * @param $bBool
