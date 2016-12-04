@@ -84,3 +84,9 @@ $var = $oGlobals->email()->GET('array');
 ->stringFull()->...
 ->noFilter()->...
 ```
+
+**NEW OPTION**
+```
+# You can now filter a variable (or a part of global for re-inject)
+$Result = $oGlobals->autoFilterManualVar($YourVar);
+```
