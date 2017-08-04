@@ -1,6 +1,8 @@
 <?php
 namespace Coercive\Utility\Globals;
 
+use Exception;
+
 /**
  * Globals
  * PHP Version 	7
@@ -77,7 +79,17 @@ class Globals {
 		if(is_null($mItem)) { return null; }
 
 		# WHAT ELSE
-		if(is_object($mItem) || is_resource($mItem) || is_callable($mItem)) {
+		if(is_object($mItem) || is_resource($mItem)) {
+			return $mItem;
+		}
+		
+		# If a class already called : crash
+		try {
+			if(@is_callable($mItem)) {
+				return $mItem;
+			}
+		}
+		catch(Exception $oException) {
 			return $mItem;
 		}
 
