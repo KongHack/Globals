@@ -82,16 +82,6 @@ class Globals {
 		if(is_object($mItem) || is_resource($mItem)) {
 			return $mItem;
 		}
-		
-		# If a class already called : crash
-		try {
-			if(@is_callable($mItem)) {
-				return $mItem;
-			}
-		}
-		catch(Exception $oException) {
-			return $mItem;
-		}
 
 		# BOOL
 		if(is_bool($mItem) || $mItem === 'false' || $mItem === 'true') {
