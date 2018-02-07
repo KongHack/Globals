@@ -1,28 +1,24 @@
 <?php
 namespace Coercive\Utility\Globals;
 
-use Exception;
-
 /**
  * Globals
- * PHP Version 	7
  *
- * @version		1
  * @package 	Coercive\Utility\Globals
  * @link		@link https://github.com/Coercive/Globals
  *
  * @author  	Anthony Moral <contact@coercive.fr>
- * @copyright   2016 - 2017 Anthony Moral
- * @license 	http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
+ * @copyright   2016 - 2018 Anthony Moral
+ * @license 	MIT
  *
- * @method 		Globals|mixed 	COOKIE($sName = null, $mValue = null)
- * @method 		Globals|mixed 	ENV($sName = null, $mValue = null)
- * @method 		Globals|mixed 	FILE($sName = null, $mValue = null)
- * @method 		Globals|mixed 	GET($sName = null, $mValue = null)
- * @method 		Globals|mixed 	POST($sName = null, $mValue = null)
- * @method 		Globals|mixed 	REQUEST($sName = null, $mValue = null)
- * @method 		Globals|mixed 	SERVER($sName = null, $mValue = null)
- * @method 		Globals|mixed 	SESSION($sName = null, $mValue = null)
+ * @method 		Globals|mixed 	COOKIE($name = null, $value = null)
+ * @method 		Globals|mixed 	ENV($name = null, $value = null)
+ * @method 		Globals|mixed 	FILE($name = null, $value = null)
+ * @method 		Globals|mixed 	GET($name = null, $value = null)
+ * @method 		Globals|mixed 	POST($name = null, $value = null)
+ * @method 		Globals|mixed 	REQUEST($name = null, $value = null)
+ * @method 		Globals|mixed 	SERVER($name = null, $value = null)
+ * @method 		Globals|mixed 	SESSION($name = null, $value = null)
  */
 class Globals {
 
@@ -41,135 +37,126 @@ class Globals {
 	private $_iSpecialFilterType = 0;
 
 	/**
-	 * Globals constructor.
-	 */
-	public function __construct() {
-		# Does nothing, but i'm happy to have a construct !
-	}
-
-	/**
 	 * SET GLOBAL
 	 *
-	 * @param string $sName
+	 * @param string $name
 	 * @return bool
 	 */
-	private function _setGlobal($sName) {
-
+	private function _setGlobal(string $name): bool
+	{
 		# PREPARE
-		$sGlobal = '_'.strtoupper($sName);
-		global $$sGlobal;
+		$name = '_'.strtoupper($name);
+		global $$name;
 
 		# VERIFY
-		if(!is_array($$sGlobal)) return false;
+		if(!is_array($$name)) return false;
 
 		# SET
-		$this->_sGlobal = $sGlobal;
+		$this->_sGlobal = $name;
 		return true;
 	}
 
 	/**
 	 * AUTO FILTER
 	 *
-	 * @param mixed $mItem
+	 * @param mixed $item
 	 * @return mixed
 	 */
-	private function _autoFilter($mItem) {
-
+	private function _autoFilter($item)
+	{
 		# NULL
-		if(is_null($mItem)) { return null; }
+		if(null === $item) { return null; }
 
 		# WHAT ELSE
-		if(is_object($mItem) || is_resource($mItem)) {
-			return $mItem;
+		if(is_object($item) || is_resource($item)) {
+			return $item;
 		}
 
 		# BOOL
-		if(is_bool($mItem) || $mItem === 'false' || $mItem === 'true') {
-			if($mItem === 'false') { $mItem = false; }
-			elseif($mItem === 'true') { $mItem = true; }
-			return $mItem;
+		if(is_bool($item) || $item === 'false' || $item === 'true') {
+			if($item === 'false') { $item = false; }
+			elseif($item === 'true') { $item = true; }
+			return $item;
 		}
 
 		# ARRAY
-		if(is_array($mItem)) {
-			foreach ($mItem as $k => $v) {
-				$mItem[$k] = $this->_autoFilter($v);
+		if(is_array($item)) {
+			foreach ($item as $k => $v) {
+				$item[$k] = $this->_autoFilter($v);
 			}
-			return $mItem;
+			return $item;
 		}
 
 		# INT
-		$iInt = filter_var($mItem, FILTER_VALIDATE_INT);
-		if($iInt !== false) { return $iInt; }
+		$int = filter_var($item, FILTER_VALIDATE_INT);
+		if($int !== false) { return $int; }
 
 		# FLOAT
-		if(preg_match('#^([\+\-])?(?!0[0-9]+)[0-9]+\.[0-9]+$#', $mItem)) {
-			return filter_var($mItem, FILTER_VALIDATE_FLOAT);
+		if(preg_match('#^([\+\-])?(?!0[0-9]+)[0-9]+\.[0-9]+$#', $item)) {
+			return floatval($item);
 		}
 
 		# STRING
-		return filter_var($mItem, FILTER_SANITIZE_SPECIAL_CHARS);
-
+		return filter_var($item, FILTER_SANITIZE_SPECIAL_CHARS);
 	}
 
 	/**
 	 * GETTER
 	 *
-	 * @param string $sName
+	 * @param string $name
 	 * @return null|mixed
 	 */
-	private function _get($sName) {
-
+	private function _get(string $name)
+	{
 		global ${$this->_sGlobal};
 
 		# EXIT
-		if(!isset(${$this->_sGlobal}[$sName])) return null;
+		if(!isset(${$this->_sGlobal}[$name])) return null;
 
-		/** @var mixed $mVar */
-		$mVar = ${$this->_sGlobal}[$sName];
-		if(!is_array($mVar)) { $mVar = [$mVar]; }
+		/** @var mixed $var */
+		$var = ${$this->_sGlobal}[$name];
+		if(!is_array($var)) { $var = [$var]; }
 
-		foreach ($mVar as $k => $v) {
+		foreach ($var as $k => $v) {
 			# INNER FILTER
 			if($this->_iSpecialFilterType) {
 				switch ($this->_iSpecialFilterType) {
 					case self::FILTER_OCTAL:
-						$mVar[$k] = octdec($v);
+						$var[$k] = octdec($v);
 						break;
 				}
 			}
 			# FILTER
 			elseif($this->_iFilterType) {
-				$mVar[$k] = filter_var($v, $this->_iFilterType);
+				$var[$k] = filter_var($v, $this->_iFilterType);
 			}
 			# AUTO
 			else {
-				$mVar[$k] = $this->_bFilter ? $this->_autoFilter($v) : $v;
+				$var[$k] = $this->_bFilter ? $this->_autoFilter($v) : $v;
 			}
 		}
 
 		$this->_iSpecialFilterType = 0;
 		$this->_iFilterType = 0;
-		return $mVar;
-
+		return $var;
 	}
 
 	/**
 	 * SETTER
 	 *
-	 * @param string $sName
-	 * @param mixed $mValue
+	 * @param string $name
+	 * @param mixed $value
 	 * @return bool
 	 */
-	private function _set($sName, $mValue) {
-
+	private function _set(string $name, $value): bool
+	{
 		global ${$this->_sGlobal};
 
 		# SKIP
 		if(!is_array(${$this->_sGlobal})) { return false; }
 
 		# ASSIGN
-		${$this->_sGlobal}[$sName] = $mValue;
+		${$this->_sGlobal}[$name] = $value;
 
 		return true;
 	}
@@ -177,21 +164,23 @@ class Globals {
 	/**
 	 * PUBLIC AUTO FILTER VAR
 	 * 
-	 * @param mixed $mVar
+	 * @param mixed $var
 	 * @return mixed
 	 */
-	public function autoFilterManualVar($mVar) {
-		return $this->_autoFilter($mVar);
+	public function autoFilterManualVar($var)
+	{
+		return $this->_autoFilter($var);
 	}
 
 	/**
 	 * (DES)ACTIVATE FILTER
 	 *
-	 * @param $bBool
+	 * @param bool $state
 	 * @return Globals
 	 */
-	public function filter($bBool) {
-		$this->_bFilter = (bool) $bBool;
+	public function filter(bool $state): Globals
+	{
+		$this->_bFilter = (bool) $state;
 		return $this;
 	}
 
@@ -200,41 +189,40 @@ class Globals {
 	 *
 	 * @return array
 	 */
-	public function filterAll() {
-
+	public function filterAll(): array
+	{
 		global ${$this->_sGlobal};
 		if(!is_array(${$this->_sGlobal})) { return []; }
 
 		# Processing
-		$aGlobal = [];
-		foreach (${$this->_sGlobal} as $sParamName => $mParamValue) {
-			$aGlobal[$sParamName] = $this->_autoFilter($mParamValue);
+		$global = [];
+		foreach (${$this->_sGlobal} as $name => $value) {
+			$global[$name] = $this->_autoFilter($value);
 		}
 
-		return $aGlobal;
+		return $global;
 	}
 
 	/**
 	 * AUTO CALL $_[ITEM]
 	 *
-	 * @param string $sName Global Name
-	 * @param array $aArguments [0] Field Name, [1] Set Value [optional]
+	 * @param string $name Global Name
+	 * @param array $arguments [0] Field Name, [1] Set Value [optional]
 	 * @return mixed
 	 */
-	public function __call($sName, $aArguments = []) {
-
+	public function __call(string $name, array $arguments = [])
+	{
 		# EXIT
-		if(empty($sName) || !$this->_setGlobal($sName)) { return null; }
+		if(!$name || !$this->_setGlobal($name)) { return null; }
 
 		# CHAINABILITY
-		if(empty($aArguments[0])) { return $this; }
+		if(empty($arguments[0])) { return $this; }
 
 		# SET
-		if(isset($aArguments[1])) { return $this->_set($aArguments[0], $aArguments[1]); }
+		if(isset($arguments[1])) { return $this->_set($arguments[0], $arguments[1]); }
 
 		# GET
-		return $this->_get($aArguments[0]);
-
+		return $this->_get($arguments[0]);
 	}
 
 	/**
@@ -242,7 +230,8 @@ class Globals {
 	 *
 	 * @return Globals
 	 */
-	public function octal() {
+	public function octal(): Globals
+	{
 		$this->_iSpecialFilterType = self::FILTER_OCTAL;
 		return $this;
 	}
@@ -252,7 +241,8 @@ class Globals {
 	 *
 	 * @return Globals
 	 */
-	public function int() {
+	public function int(): Globals
+	{
 		$this->_iFilterType = FILTER_VALIDATE_INT;
 		return $this;
 	}
@@ -262,7 +252,8 @@ class Globals {
 	 *
 	 * @return Globals
 	 */
-	public function float() {
+	public function float(): Globals
+	{
 		$this->_iFilterType = FILTER_VALIDATE_FLOAT;
 		return $this;
 	}
@@ -272,7 +263,8 @@ class Globals {
 	 *
 	 * @return Globals
 	 */
-	public function bool() {
+	public function bool(): Globals
+	{
 		$this->_iFilterType = FILTER_VALIDATE_BOOLEAN;
 		return $this;
 	}
@@ -282,7 +274,8 @@ class Globals {
 	 *
 	 * @return Globals
 	 */
-	public function ip() {
+	public function ip(): Globals
+	{
 		$this->_iFilterType = FILTER_VALIDATE_IP;
 		return $this;
 	}
@@ -292,7 +285,8 @@ class Globals {
 	 *
 	 * @return Globals
 	 */
-	public function ipv4() {
+	public function ipv4(): Globals
+	{
 		$this->_iFilterType = FILTER_FLAG_IPV4;
 		return $this;
 	}
@@ -302,7 +296,8 @@ class Globals {
 	 *
 	 * @return Globals
 	 */
-	public function ipv6() {
+	public function ipv6(): Globals
+	{
 		$this->_iFilterType = FILTER_FLAG_IPV6;
 		return $this;
 	}
@@ -312,7 +307,8 @@ class Globals {
 	 *
 	 * @return Globals
 	 */
-	public function callback() {
+	public function callback(): Globals
+	{
 		$this->_iFilterType = FILTER_CALLBACK;
 		return $this;
 	}
@@ -322,7 +318,8 @@ class Globals {
 	 *
 	 * @return Globals
 	 */
-	public function rArray() {
+	public function array(): Globals
+	{
 		$this->_iFilterType = FILTER_REQUIRE_ARRAY;
 		return $this;
 	}
@@ -332,7 +329,8 @@ class Globals {
 	 *
 	 * @return Globals
 	 */
-	public function email() {
+	public function email(): Globals
+	{
 		$this->_iFilterType = FILTER_VALIDATE_EMAIL;
 		return $this;
 	}
@@ -342,7 +340,8 @@ class Globals {
 	 *
 	 * @return Globals
 	 */
-	public function url() {
+	public function url(): Globals
+	{
 		$this->_iFilterType = FILTER_VALIDATE_URL;
 		return $this;
 	}
@@ -352,7 +351,8 @@ class Globals {
 	 *
 	 * @return Globals
 	 */
-	public function mac() {
+	public function mac(): Globals
+	{
 		$this->_iFilterType = FILTER_VALIDATE_MAC;
 		return $this;
 	}
@@ -362,7 +362,8 @@ class Globals {
 	 *
 	 * @return Globals
 	 */
-	public function string() {
+	public function string(): Globals
+	{
 		$this->_iFilterType = FILTER_SANITIZE_SPECIAL_CHARS;
 		return $this;
 	}
@@ -372,7 +373,8 @@ class Globals {
 	 *
 	 * @return Globals
 	 */
-	public function stringFull() {
+	public function stringFull(): Globals
+	{
 		$this->_iFilterType = FILTER_SANITIZE_FULL_SPECIAL_CHARS;
 		return $this;
 	}
@@ -382,7 +384,8 @@ class Globals {
 	 *
 	 * @return Globals
 	 */
-	public function noFilter() {
+	public function noFilter(): Globals
+	{
 		$this->_iFilterType = FILTER_DEFAULT;
 		return $this;
 	}
