@@ -1,19 +1,13 @@
-phpunit.xml
-
 ### PHPStorm ###
 .idea/
 
 ### COMPOSER ###
 vendor/
-composer.lock
 
 ### Windows ###
 Thumbs.db
 ehthumbs.db
 Desktop.ini
-
-### Compass ###
-.sass-cache
 
 ### OSX ###
 .DS_Store

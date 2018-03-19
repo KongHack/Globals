@@ -111,11 +111,17 @@ class Globals {
 		global ${$this->_sGlobal};
 
 		# EXIT
-		if(!isset(${$this->_sGlobal}[$name])) return null;
+		if(!isset(${$this->_sGlobal}[$name])) {
+		    return null;
+        }
 
 		/** @var mixed $var */
 		$var = ${$this->_sGlobal}[$name];
-		if(!is_array($var)) { $var = [$var]; }
+		$arr = false;   // Have we faked an array?
+		if(!is_array($var)) {
+		    $var = [$var];
+		    $arr = true;
+		}
 
 		foreach ($var as $k => $v) {
 			# INNER FILTER
@@ -138,6 +144,9 @@ class Globals {
 
 		$this->_iSpecialFilterType = 0;
 		$this->_iFilterType = 0;
+		if($arr) {
+		    return array_pop($var);
+        }
 		return $var;
 	}
 
