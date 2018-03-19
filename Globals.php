@@ -358,6 +358,7 @@ class Globals
     public function callback(array $callback): Globals
     {
         $this->_iFilterType = FILTER_CALLBACK;
+        $this->_callback    = $callback;
 
         return $this;
     }
