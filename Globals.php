@@ -192,6 +192,21 @@ class Globals
     }
 
     /**
+     * @param string $name
+     * @return array|null
+     */
+    public function getKeys(string $name)
+    {
+        global ${$name};
+
+        # EXIT
+        if (!isset(${$name}) || !is_array(${$name})) {
+            return null;
+        }
+        return array_keys(${$name});
+    }
+
+    /**
      * PUBLIC AUTO FILTER VAR
      *
      * @param mixed $var
