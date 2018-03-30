@@ -197,6 +197,10 @@ class Globals
      */
     public function getKeys(string $name)
     {
+        if(substr($name, 0, 1) !== '_') {
+            $name = '_'.$name;
+        }
+
         global ${$name};
 
         # EXIT
