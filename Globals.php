@@ -24,6 +24,7 @@ class Globals
 {
 
     const FILTER_OCTAL = 1;
+    const FILTER_TAGS  = 2;
 
     /** @var string */
     private $_sGlobal = '';
@@ -139,31 +140,46 @@ class Globals
             $arr = true;
         }
 
-        foreach ($var as $k => $v) {
-            # INNER FILTER
-            if ($this->_iSpecialFilterType) {
-                switch ($this->_iSpecialFilterType) {
-                    case self::FILTER_OCTAL:
-                        $var[$k] = octdec($v);
-                    break;
-                }
-            } # CALLBACK
-            elseif ($this->_iFilterType === FILTER_CALLBACK) {
-                $var[$k] = filter_var($v, $this->_iFilterType, $this->_callback);
-            } # FILTER
-            elseif ($this->_iFilterType) {
-                $var[$k] = filter_var($v, $this->_iFilterType);
-            } # AUTO
-            else {
-                $var[$k] = $this->_bFilter ? $this->_autoFilter($v) : $v;
-            }
-        }
+        $var = $this->executeFiltration($var);
 
         $this->_iSpecialFilterType = 0;
         $this->_iFilterType        = 0;
         $this->_callback           = [];
         if ($arr) {
             return array_pop($var);
+        }
+
+        return $var;
+    }
+
+    /**
+     * @param array $var
+     * @return array
+     */
+    private function executeFiltration(array $var)
+    {
+        foreach ($var as $k => $v) {
+            if(is_array($v)) {
+                $var[$k] = $this->executeFiltration($v);
+            }
+
+            switch(true) {
+                case $this->_iSpecialFilterType == self::FILTER_OCTAL:
+                    $var[$k] = octdec($v);
+                break;
+                case $this->_iSpecialFilterType == self::FILTER_TAGS:
+                    $var[$k] = trim(strip_tags($v));
+                break;
+                case $this->_iFilterType === FILTER_CALLBACK:
+                    $var[$k] = filter_var($v, $this->_iFilterType, $this->_callback);
+                break;
+                case $this->_iFilterType > 0:
+                    $var[$k] = filter_var($v, $this->_iFilterType);
+                break;
+                default:
+                    $var[$k] = $this->_bFilter ? $this->_autoFilter($v) : $v;
+                break;
+            }
         }
 
         return $var;
@@ -431,11 +447,23 @@ class Globals
     }
 
     /**
-     * FILTER_SANITIZE_SPECIAL_CHARS
+     * FILTER_TAGS
      *
      * @return Globals
      */
     public function string(): Globals
+    {
+        $this->_iSpecialFilterType = self::FILTER_TAGS;
+
+        return $this;
+    }
+
+    /**
+     * FILTER_SANITIZE_SPECIAL_CHARS
+     *
+     * @return Globals
+     */
+    public function stringSpecial(): Globals
     {
         $this->_iFilterType = FILTER_SANITIZE_SPECIAL_CHARS;
 
