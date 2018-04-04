@@ -272,6 +272,21 @@ class Globals
     }
 
     /**
+     * FILTER NONE
+     *
+     * @return array
+     */
+    public function filterNone(): array
+    {
+        global ${$this->_sGlobal};
+        if (!is_array(${$this->_sGlobal})) {
+            return [];
+        }
+
+        return ${$this->_sGlobal};
+    }
+
+    /**
      * AUTO CALL $_[ITEM]
      *
      * @param string $name      Global Name
