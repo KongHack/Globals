@@ -25,6 +25,7 @@ class Globals
 
     const FILTER_OCTAL = 1;
     const FILTER_TAGS  = 2;
+    const FILTER_DATE  = 3;
 
     /** @var string */
     private $_sGlobal = '';
@@ -169,6 +170,16 @@ class Globals
                 break;
                 case $this->_iSpecialFilterType == self::FILTER_TAGS:
                     $var[$k] = trim(strip_tags($v));
+                break;
+                case $this->_iSpecialFilterType == self::FILTER_DATE:
+                    $var[$k] = trim(strip_tags($v));
+                    if (!empty($var[$k])) {
+                        if(strtotime($var[$k])!==false) {
+                            $var[$k] = date('Y-m-d', strtotime($var[$k]));
+                            break;
+                        }
+                    }
+                    $var[$k] = '0000-00-00';
                 break;
                 case $this->_iFilterType === FILTER_CALLBACK:
                     $var[$k] = filter_var($v, $this->_iFilterType, $this->_callback);
@@ -469,6 +480,18 @@ class Globals
     public function string(): Globals
     {
         $this->_iSpecialFilterType = self::FILTER_TAGS;
+
+        return $this;
+    }
+
+    /**
+     * FILTER_DATE
+     *
+     * @return Globals
+     */
+    public function date(): Globals
+    {
+        $this->_iSpecialFilterType = self::FILTER_DATE;
 
         return $this;
     }
