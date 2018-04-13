@@ -13,7 +13,7 @@ namespace Coercive\Utility\Globals;
  *
  * @method 		Globals|mixed 	COOKIE($name = null, $value = null)
  * @method 		Globals|mixed 	ENV($name = null, $value = null)
- * @method 		Globals|mixed 	FILE($name = null, $value = null)
+ * @method 		Globals|mixed 	FILES($name = null, $value = null)
  * @method 		Globals|mixed 	GET($name = null, $value = null)
  * @method 		Globals|mixed 	POST($name = null, $value = null)
  * @method 		Globals|mixed 	REQUEST($name = null, $value = null)
