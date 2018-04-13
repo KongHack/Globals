@@ -23,9 +23,10 @@ namespace Coercive\Utility\Globals;
 class Globals
 {
 
-    const FILTER_OCTAL = 1;
-    const FILTER_TAGS  = 2;
-    const FILTER_DATE  = 3;
+    const FILTER_OCTAL      = 1;
+    const FILTER_TAGS       = 2;
+    const FILTER_DATE       = 3;
+    const FILTER_DATE_TIME  = 4;
 
     /** @var string */
     private $_sGlobal = '';
@@ -180,6 +181,16 @@ class Globals
                         }
                     }
                     $var[$k] = '0000-00-00';
+                break;
+                case $this->_iSpecialFilterType == self::FILTER_DATE_TIME:
+                    $var[$k] = trim(strip_tags($v));
+                    if (!empty($var[$k])) {
+                        if(strtotime($var[$k])!==false) {
+                            $var[$k] = date('Y-m-d H:i:s', strtotime($var[$k]));
+                            break;
+                        }
+                    }
+                    $var[$k] = '0000-00-00 00:00:00';
                 break;
                 case $this->_iFilterType === FILTER_CALLBACK:
                     $var[$k] = filter_var($v, $this->_iFilterType, $this->_callback);
@@ -492,6 +503,18 @@ class Globals
     public function date(): Globals
     {
         $this->_iSpecialFilterType = self::FILTER_DATE;
+
+        return $this;
+    }
+
+    /**
+     * FILTER_DATE_TIME
+     *
+     * @return Globals
+     */
+    public function dateTime(): Globals
+    {
+        $this->_iSpecialFilterType = self::FILTER_DATE_TIME;
 
         return $this;
     }
