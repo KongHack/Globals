@@ -27,6 +27,7 @@ class Globals
     const FILTER_TAGS       = 2;
     const FILTER_DATE       = 3;
     const FILTER_DATE_TIME  = 4;
+    const FILTER_ARRAY      = 5;
 
     /** @var string */
     private $_sGlobal = '';
@@ -143,6 +144,15 @@ class Globals
         }
 
         $var = $this->executeFiltration($var);
+        if($this->_iSpecialFilterType == self::FILTER_ARRAY) {
+            if($arr) {
+                $var = array_pop($var);
+                $arr = false;
+                if(!is_array($var)) {
+                    $var = [$var];
+                }
+            }
+        }
 
         $this->_iSpecialFilterType = 0;
         $this->_iFilterType        = 0;
@@ -198,6 +208,7 @@ class Globals
                 case $this->_iFilterType > 0:
                     $var[$k] = filter_var($v, $this->_iFilterType);
                 break;
+                case $this->_iSpecialFilterType == self::FILTER_ARRAY:
                 default:
                     $var[$k] = $this->_bFilter ? $this->_autoFilter($v) : $v;
                 break;
@@ -436,13 +447,13 @@ class Globals
     }
 
     /**
-     * FILTER_REQUIRE_ARRAY
+     * FILTER_ARRAY
      *
      * @return Globals
      */
     public function array(): Globals
     {
-        $this->_iFilterType = FILTER_REQUIRE_ARRAY;
+        $this->_iSpecialFilterType = self::FILTER_ARRAY;
 
         return $this;
     }
