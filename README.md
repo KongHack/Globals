@@ -85,7 +85,7 @@ $var = $oGlobals->email()->GET('array');
  SESSION
 ```
 
-**FILTER**
+**Available Filters**
 ```
 ->octal()->...
 ->int()->...
@@ -107,9 +107,9 @@ $var = $oGlobals->email()->GET('array');
 ->noFilter()->...
 ```
 
-**NEW OPTION**
+**Additional Features**
 ```
-# You can now filter a variable (or a part of global for re-inject)
+# You can filter a variable (or a part of global for re-inject)
 $Result = $oGlobals->autoFilterManualVar($YourVar);
 ```
 
