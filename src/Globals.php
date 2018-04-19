@@ -134,6 +134,7 @@ class Globals
 
         # EXIT
         if (!isset(${$this->_sGlobal}[$name])) {
+            $this->reset();
             return null;
         }
 
@@ -156,9 +157,7 @@ class Globals
             }
         }
 
-        $this->_iSpecialFilterType = 0;
-        $this->_iFilterType        = 0;
-        $this->_callback           = null;
+        $this->reset();
         if ($arr) {
             return array_pop($var);
         }
@@ -566,6 +565,16 @@ class Globals
         $this->_iFilterType = FILTER_DEFAULT;
 
         return $this;
+    }
+
+    /**
+     * Used to reset any filter variables
+     */
+    protected function reset()
+    {
+        $this->_iSpecialFilterType = 0;
+        $this->_iFilterType        = 0;
+        $this->_callback           = null;
     }
 
 }

@@ -14,6 +14,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
  - @GameCharmer update variable processing to be recursive
  - @GameCharmer renamed namespace due to divergence in code
  - @GameCharmer fixed issue with FILE call (should have been labeled FILES)
+ - @GameCharmer properly reset on non-existent variable
 
 
 
