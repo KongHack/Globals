@@ -1,19 +1,27 @@
-Coercive Globals Utility
+Globals
 ========================
 
 GLOBALS allows you to easily manage your global variables in PHP by filtering the content automatically or specifically, with batch processing possible in case of array.
 
+This implementation is a fork of the original Coercive/Globals available at https://github.com/Coercive/Globals
+
+I've been using an override in composer.json for a while to use the fork over the original, but seeing as how they've diverged, 
+felt it was a better idea to try and separate namespaces and packages.
+
+Note: This package contains a class used to ease transition pains that will conflict with the original.
+
+
 Get
 ---
 ```
-composer require coercive/globals
+composer require gcworld/globals
 ```
 
 Usage
 -----
 
 ```php
-use Coercive\Utility\Globals;
+use GCWorld\Globals;
 
 # LOAD
 $oGlobals = new Globals;
@@ -65,6 +73,17 @@ $var = $oGlobals->email()->GET('array');
         [1]=> bool(false)
 */
 ```
+**Supported Globals**
+```
+ COOKIE
+ ENV
+ FILES
+ GET
+ POST
+ REQUEST
+ SERVER
+ SESSION
+```
 
 **FILTER**
 ```
@@ -75,7 +94,7 @@ $var = $oGlobals->email()->GET('array');
 ->ip()->...
 ->ipv4()->...
 ->ipv6()->...
-->callback([])->...
+->callback(Callable $callback)->...
 ->array()->...
 ->email()->...
 ->url()->...
@@ -93,3 +112,8 @@ $var = $oGlobals->email()->GET('array');
 # You can now filter a variable (or a part of global for re-inject)
 $Result = $oGlobals->autoFilterManualVar($YourVar);
 ```
+
+**Notes on Filters**
+ - The ``string()`` filter runs a trim(strip_tags()) and may not be what you need.  The ``stringSpecial()`` is the filter equivalent function
+ - The ``callback`` filter requires a callable. Previously, this just set the filter type and didn't function properly
+ - The ``date()`` and ``dateTime`` filters check against ``strtotime($input) !== false`` before translating to a Y-m-d( H:i:s) format 

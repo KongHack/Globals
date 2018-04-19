@@ -1,16 +1,2 @@
-### PHPStorm ###
 .idea/
-
-### COMPOSER ###
 vendor/
-
-### Windows ###
-Thumbs.db
-ehthumbs.db
-Desktop.ini
-
-### OSX ###
-.DS_Store
-.AppleDouble
-.LSOverride
-Icon*

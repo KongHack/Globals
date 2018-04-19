@@ -1,14 +1,14 @@
 {
-    "name": "coercive/globals",
+    "name": "gcworld/globals",
     "type": "library",
-    "description": "Coercive Globals Utility",
-    "homepage": "http://coercive.fr",
+    "description": "Globals",
+    "homepage": "http://gamecharmer.com",
     "license": "MIT",
-    "licenses": [{
-      "type": "MIT",
-      "url": "https://github.com/Coercive/Globals/blob/master/LICENSE.txt"
-    }],
     "authors": [
+        {
+            "name": "GameCharmer",
+            "email": "admin@gamecharmer.com"
+        },
         {
             "name": "Anthony Moral",
             "email": "contact@coercive.fr",
@@ -19,7 +19,10 @@
         "php": ">=7.1"
     },
     "autoload": {
-        "psr-4": { "Coercive\\Utility\\Globals\\": "" }
+        "psr-4": {
+            "GCWorld\\Globals\\": "src/",
+            "Coercive\\Utility\\Globals\\": "src_transition/"
+        }
     },
     "minimum-stability" : "dev",
     "prefer-stable" : true,

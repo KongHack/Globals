@@ -1,14 +1,14 @@
 <?php
-namespace Coercive\Utility\Globals;
+namespace GCWorld\Globals;
 
 /**
  * Globals
  *
- * @package 	Coercive\Utility\Globals
- * @link		@link https://github.com/Coercive/Globals
+ * @package 	GCWorld\Globals
+ * @link		@link https://github.com/KongHack/Globals
  *
- * @author  	Anthony Moral <contact@coercive.fr>
- * @copyright   2016 - 2018 Anthony Moral
+ * @author  	GameCharmer <admin@gamecharmer.com> | Anthony Moral <contact@coercive.fr>
+ * @copyright   2018 GameCharmer | 2016 - 2018 Anthony Moral
  * @license 	MIT
  *
  * @method 		Globals|mixed 	COOKIE($name = null, $value = null)
@@ -41,8 +41,8 @@ class Globals
     /** @var int */
     private $_iSpecialFilterType = 0;
 
-    /** @var array */
-    private $_callback = [];
+    /** @var callable|null */
+    private $_callback = null;
 
     /**
      * SET GLOBAL
@@ -86,15 +86,17 @@ class Globals
         }
 
         # BOOL
-        if (is_bool($item) || $item === 'false' || $item === 'true') {
-            if ($item === 'false') {
+        $tmp = is_scalar($item) ? strtolower($item) : $item;
+        if (is_bool($item) || in_array($tmp, ['false', 'true', 'y', 'n'], true)) {
+            if (in_array($tmp, ['false', 'n'], true)) {
                 $item = false;
-            } elseif ($item === 'true') {
+            } elseif (in_array($tmp, ['true', 'y'], true)) {
                 $item = true;
             }
 
             return $item;
         }
+        unset($tmp);
 
         # ARRAY
         if (is_array($item)) {
@@ -156,7 +158,7 @@ class Globals
 
         $this->_iSpecialFilterType = 0;
         $this->_iFilterType        = 0;
-        $this->_callback           = [];
+        $this->_callback           = null;
         if ($arr) {
             return array_pop($var);
         }
@@ -434,11 +436,11 @@ class Globals
     /**
      * FILTER_CALLBACK
      *
-     * @param $callback array
+     * @param $callback callable
      *
      * @return Globals
      */
-    public function callback(array $callback): Globals
+    public function callback(callable $callback): Globals
     {
         $this->_iFilterType = FILTER_CALLBACK;
         $this->_callback    = $callback;
