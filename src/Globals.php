@@ -28,6 +28,8 @@ class Globals
     const FILTER_DATE       = 3;
     const FILTER_DATE_TIME  = 4;
     const FILTER_ARRAY      = 5;
+    const FILTER_JSON_OBJ   = 6;
+    const FILTER_JSON_ARRAY = 7;
 
     /** @var string */
     private $_sGlobal = '';
@@ -202,6 +204,10 @@ class Globals
                         }
                     }
                     $var[$k] = '0000-00-00 00:00:00';
+                break;
+                case in_array($this->_iSpecialFilterType, [self::FILTER_JSON_OBJ, self::FILTER_JSON_ARRAY]):
+                    $tmp = json_decode($v, ($this->_iSpecialFilterType==self::FILTER_JSON_ARRAY));
+                    $var[$k] = ($tmp === false ? null : $tmp);
                 break;
                 case $this->_iFilterType === FILTER_CALLBACK:
                     $var[$k] = filter_var($v, $this->_iFilterType, $this->_callback);
@@ -551,6 +557,19 @@ class Globals
     public function stringFull(): Globals
     {
         $this->_iFilterType = FILTER_SANITIZE_FULL_SPECIAL_CHARS;
+
+        return $this;
+    }
+
+    /**
+     * FILTER_JSON_ARRAY | FILTER_JSON_OBJ
+     *
+     * @param bool $asArray
+     * @return $this
+     */
+    public function json(bool $asArray)
+    {
+        $this->_iSpecialFilterType = $asArray ? self::FILTER_JSON_ARRAY : self::FILTER_JSON_OBJ;
 
         return $this;
     }

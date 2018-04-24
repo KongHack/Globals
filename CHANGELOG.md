@@ -7,6 +7,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 
 
+## [2.0.1](https://github.com/KongHack/Globals/releases/tag/2.0.1)
+ - @GameCharmer Added json filter
+ 
+
 ## [2.0](https://github.com/KongHack/Globals/releases/tag/2.0)
  - @GameCharmer Added date and datetime filters
  - @GameCharmer replaced string filter with a trim(strip_tags()) function, kept original functionality as stringSpecial()
