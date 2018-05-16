@@ -37,6 +37,9 @@ class Globals
     /** @var bool */
     private $_bFilter = true;
 
+    /** @var bool */
+    private $_bDefaults = false;
+
     /** @var int */
     private $_iFilterType = 0;
 
@@ -54,16 +57,16 @@ class Globals
      */
     private function _setGlobal(string $name): bool
     {
-        # PREPARE
+        // PREPARE
         $name = '_'.strtoupper($name);
         global $$name;
 
-        # VERIFY
+        // VERIFY
         if (!is_array($$name)) {
             return false;
         }
 
-        # SET
+        // SET
         $this->_sGlobal = $name;
 
         return true;
@@ -77,17 +80,17 @@ class Globals
      */
     private function _autoFilter($item)
     {
-        # NULL
+        // NULL
         if (null === $item) {
             return null;
         }
 
-        # WHAT ELSE
+        // WHAT ELSE
         if (is_object($item) || is_resource($item)) {
             return $item;
         }
 
-        # BOOL
+        // BOOL
         $tmp = is_scalar($item) ? strtolower($item) : $item;
         if (is_bool($item) || in_array($tmp, ['false', 'true', 'y', 'n'], true)) {
             if (in_array($tmp, ['false', 'n'], true)) {
@@ -100,7 +103,7 @@ class Globals
         }
         unset($tmp);
 
-        # ARRAY
+        // ARRAY
         if (is_array($item)) {
             foreach ($item as $k => $v) {
                 $item[$k] = $this->_autoFilter($v);
@@ -109,18 +112,18 @@ class Globals
             return $item;
         }
 
-        # INT
+        // INT
         $int = filter_var($item, FILTER_VALIDATE_INT);
         if ($int !== false) {
             return $int;
         }
 
-        # FLOAT
+        // FLOAT
         if (preg_match('#^([\+\-])?(?!0[0-9]+)[0-9]+\.[0-9]+$#', $item)) {
             return floatval($item);
         }
 
-        # STRING
+        // STRING
         return filter_var($item, FILTER_SANITIZE_SPECIAL_CHARS);
     }
 
@@ -134,10 +137,11 @@ class Globals
     {
         global ${$this->_sGlobal};
 
-        # EXIT
+        // EXIT
         if (!isset(${$this->_sGlobal}[$name])) {
             $this->reset();
-            return null;
+
+            return $this->returnDefault();
         }
 
         /** @var mixed $var */
@@ -149,11 +153,11 @@ class Globals
         }
 
         $var = $this->executeFiltration($var);
-        if($this->_iSpecialFilterType == self::FILTER_ARRAY) {
-            if($arr) {
+        if ($this->_iSpecialFilterType == self::FILTER_ARRAY) {
+            if ($arr) {
                 $var = array_pop($var);
                 $arr = false;
-                if(!is_array($var)) {
+                if (!is_array($var)) {
                     $var = [$var];
                 }
             }
@@ -174,11 +178,11 @@ class Globals
     private function executeFiltration(array $var)
     {
         foreach ($var as $k => $v) {
-            if(is_array($v)) {
+            if (is_array($v)) {
                 $var[$k] = $this->executeFiltration($v);
             }
 
-            switch(true) {
+            switch (true) {
                 case $this->_iSpecialFilterType == self::FILTER_OCTAL:
                     $var[$k] = octdec($v);
                 break;
@@ -188,7 +192,7 @@ class Globals
                 case $this->_iSpecialFilterType == self::FILTER_DATE:
                     $var[$k] = trim(strip_tags($v));
                     if (!empty($var[$k])) {
-                        if(strtotime($var[$k])!==false) {
+                        if (strtotime($var[$k]) !== false) {
                             $var[$k] = date('Y-m-d', strtotime($var[$k]));
                             break;
                         }
@@ -198,7 +202,7 @@ class Globals
                 case $this->_iSpecialFilterType == self::FILTER_DATE_TIME:
                     $var[$k] = trim(strip_tags($v));
                     if (!empty($var[$k])) {
-                        if(strtotime($var[$k])!==false) {
+                        if (strtotime($var[$k]) !== false) {
                             $var[$k] = date('Y-m-d H:i:s', strtotime($var[$k]));
                             break;
                         }
@@ -206,7 +210,7 @@ class Globals
                     $var[$k] = '0000-00-00 00:00:00';
                 break;
                 case in_array($this->_iSpecialFilterType, [self::FILTER_JSON_OBJ, self::FILTER_JSON_ARRAY]):
-                    $tmp = json_decode($v, ($this->_iSpecialFilterType==self::FILTER_JSON_ARRAY));
+                    $tmp     = json_decode($v, ($this->_iSpecialFilterType == self::FILTER_JSON_ARRAY));
                     $var[$k] = ($tmp === false ? null : $tmp);
                 break;
                 case $this->_iFilterType === FILTER_CALLBACK:
@@ -236,12 +240,12 @@ class Globals
     {
         global ${$this->_sGlobal};
 
-        # SKIP
+        // SKIP
         if (!is_array(${$this->_sGlobal})) {
             return false;
         }
 
-        # ASSIGN
+        // ASSIGN
         ${$this->_sGlobal}[$name] = $value;
 
         return true;
@@ -253,16 +257,17 @@ class Globals
      */
     public function getKeys(string $name)
     {
-        if(substr($name, 0, 1) !== '_') {
+        if (substr($name, 0, 1) !== '_') {
             $name = '_'.$name;
         }
 
         global ${$name};
 
-        # EXIT
+        // EXIT
         if (!isset(${$name}) || !is_array(${$name})) {
             return null;
         }
+
         return array_keys(${$name});
     }
 
@@ -278,7 +283,7 @@ class Globals
     }
 
     /**
-     * (DES)ACTIVATE FILTER
+     * (DE)ACTIVATE FILTER
      *
      * @param bool $state
      * @return Globals
@@ -286,6 +291,19 @@ class Globals
     public function filter(bool $state): Globals
     {
         $this->_bFilter = (bool)$state;
+
+        return $this;
+    }
+
+    /**
+     * (DE)ACTIVATE DEFAULTS
+     *
+     * @param bool $state
+     * @return Globals
+     */
+    public function defaults(bool $state): Globals
+    {
+        $this->_bDefaults = (bool)$state;
 
         return $this;
     }
@@ -302,7 +320,7 @@ class Globals
             return [];
         }
 
-        # Processing
+        // Processing
         $global = [];
         foreach (${$this->_sGlobal} as $name => $value) {
             $global[$name] = $this->_autoFilter($value);
@@ -335,22 +353,24 @@ class Globals
      */
     public function __call(string $name, array $arguments = [])
     {
-        # EXIT
+        // EXIT
         if (!$name || !$this->_setGlobal($name)) {
             return null;
         }
 
-        # CHAINABILITY
+        // Nope, this is bullshit
+        /*
         if (empty($arguments[0])) {
             return $this;
         }
+        */
 
-        # SET
+        // SET
         if (isset($arguments[1])) {
             return $this->_set($arguments[0], $arguments[1]);
         }
 
-        # GET
+        // GET
         return $this->_get($arguments[0]);
     }
 
@@ -416,6 +436,7 @@ class Globals
 
     /**
      * FILTER_FLAG_IPV4
+     * CAUTION: Does not fucking work
      *
      * @return Globals
      */
@@ -428,6 +449,7 @@ class Globals
 
     /**
      * FILTER_FLAG_IPV6
+     * CAUTION: Does not fucking work
      *
      * @return Globals
      */
@@ -596,4 +618,59 @@ class Globals
         $this->_callback           = null;
     }
 
+    /**
+     * @return mixed
+     */
+    protected function returnDefault()
+    {
+        if (!$this->_bDefaults) {
+            return null;
+        }
+
+        switch ($this->_iSpecialFilterType) {
+            case self::FILTER_OCTAL:
+                return 0;
+            case self::FILTER_TAGS:
+                return '';
+            case self::FILTER_DATE:
+                return '0000-00-00';
+            case self::FILTER_DATE_TIME:
+                return '0000-00-00 00:00:00';
+            case self::FILTER_ARRAY:
+                return [];
+            case self::FILTER_JSON_OBJ:
+                return new \stdClass();
+            case self::FILTER_JSON_ARRAY:
+                return [];
+        }
+
+        switch ($this->_iFilterType) {
+            case FILTER_VALIDATE_INT:
+                return 0;
+            case FILTER_VALIDATE_FLOAT:
+                return 0.0;
+            case FILTER_VALIDATE_BOOLEAN:
+                return false;
+            case FILTER_VALIDATE_IP:
+                return '0.0.0.0';
+            case FILTER_FLAG_IPV4:
+                return '0.0.0.0';
+            case FILTER_FLAG_IPV6:
+                return '::/0';
+            case FILTER_CALLBACK:
+                return null;
+            case FILTER_VALIDATE_EMAIL:
+                return '';
+            case FILTER_VALIDATE_URL:
+                return '';
+            case FILTER_VALIDATE_MAC:
+                return '00-00-00-00-00-00';
+            case FILTER_SANITIZE_SPECIAL_CHARS:
+                return '';
+            case FILTER_SANITIZE_FULL_SPECIAL_CHARS:
+                return '';
+        }
+
+        return null;
+    }
 }
