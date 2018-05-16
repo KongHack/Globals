@@ -645,6 +645,8 @@ class Globals
         }
 
         switch ($this->_iFilterType) {
+            case FILTER_DEFAULT:
+                return null; // Could be anything
             case FILTER_VALIDATE_INT:
                 return 0;
             case FILTER_VALIDATE_FLOAT:
