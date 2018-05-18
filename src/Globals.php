@@ -358,12 +358,10 @@ class Globals
             return null;
         }
 
-        // Nope, this is bullshit
-        /*
+        // Super cheap hack! GAH!
         if (empty($arguments[0])) {
             return $this;
         }
-        */
 
         // SET
         if (isset($arguments[1])) {

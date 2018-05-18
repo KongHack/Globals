@@ -7,7 +7,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 
 
-## [2.0.2](https://github.com/KongHack/Globals/releases/tag/2.0.1)
+## [2.0.3](https://github.com/KongHack/Globals/releases/tag/2.0.3)
+ - @GameCharmer add back super hacky filterAll / filterNone stuff
+
+
+## [2.0.2](https://github.com/KongHack/Globals/releases/tag/2.0.2)
  - @GameCharmer Added Defaults System
  - Notes on IPv4 and IPv6 functions being complete garbage
  
