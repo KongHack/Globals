@@ -7,6 +7,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 
 
+## [2.0.5](https://github.com/KongHack/Globals/releases/tag/2.0.5)
+ - @GameCharmer fix defaults function
+
+
 ## [2.0.4](https://github.com/KongHack/Globals/releases/tag/2.0.4)
  - @GameCharmer prevent stupid usage of the defaults function
 
