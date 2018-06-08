@@ -139,9 +139,10 @@ class Globals
 
         // EXIT
         if (!isset(${$this->_sGlobal}[$name])) {
+            $return = $this->returnDefault();
             $this->reset();
 
-            return $this->returnDefault();
+            return $return;
         }
 
         /** @var mixed $var */
