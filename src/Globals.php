@@ -299,13 +299,13 @@ class Globals
      * (DE)ACTIVATE DEFAULTS
      *
      * @param bool $state
-     * @return Globals
+     * @return void
      */
-    public function defaults(bool $state): Globals
+    public function defaults(bool $state)
     {
         $this->_bDefaults = (bool)$state;
 
-        return $this;
+        // This used to return $this, but people were using it super incorrectly
     }
 
     /**

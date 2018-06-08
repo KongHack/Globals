@@ -7,6 +7,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 
 
+## [2.0.4](https://github.com/KongHack/Globals/releases/tag/2.0.4)
+ - @GameCharmer prevent stupid usage of the defaults function
+
+
 ## [2.0.3](https://github.com/KongHack/Globals/releases/tag/2.0.3)
  - @GameCharmer add back super hacky filterAll / filterNone stuff
 
