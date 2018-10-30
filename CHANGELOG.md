@@ -7,6 +7,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 
 
+## [2.0.6](https://github.com/KongHack/Globals/releases/tag/2.0.6)
+ - @GameCharmer Add fixUTF8 to data by default
+ - neitanod/forceutf8 installed in version v2.0.2
+   Release notes: https://github.com/neitanod/forceutf8/releases/tag/v2.0.2
+
+
 ## [2.0.5](https://github.com/KongHack/Globals/releases/tag/2.0.5)
  - @GameCharmer fix defaults function
 

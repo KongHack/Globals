@@ -1,6 +1,8 @@
 <?php
 namespace GCWorld\Globals;
 
+use ForceUTF8\Encoding;
+
 /**
  * Globals
  *
@@ -48,6 +50,11 @@ class Globals
 
     /** @var callable|null */
     private $_callback = null;
+
+    /**
+     * @var bool
+     */
+    private $_bUTF8 = true;
 
     /**
      * SET GLOBAL
@@ -227,6 +234,10 @@ class Globals
             }
         }
 
+        if($this->_bUTF8) {
+            $var = $this->fixUTF8($var);
+        }
+
         return $var;
     }
 
@@ -305,8 +316,17 @@ class Globals
     public function defaults(bool $state)
     {
         $this->_bDefaults = (bool)$state;
+    }
 
-        // This used to return $this, but people were using it super incorrectly
+    /**
+     * (DE)ACTIVATE UEF8
+     *
+     * @param bool $state
+     * @return void
+     */
+    public function utf8(bool $state)
+    {
+        $this->_bUTF8 = (bool)$state;
     }
 
     /**
@@ -673,5 +693,23 @@ class Globals
         }
 
         return null;
+    }
+
+    /**
+     * @param mixed $input
+     * @return mixed
+     */
+    protected function fixUTF8($input)
+    {
+        if(is_array($input)) {
+            foreach($input as $k => $v) {
+                $input[$k] = $this->fixUTF8($v);
+            }
+        }
+        if(is_string($input)) {
+            $input = Encoding::fixUTF8($input, Encoding::ICONV_IGNORE);
+        }
+
+        return $input;
     }
 }

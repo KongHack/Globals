@@ -16,7 +16,9 @@
         }
     ],
     "require": {
-        "php": ">=7.1"
+        "php": ">=7.1",
+        "ext-json":"*",
+        "neitanod/forceutf8": "^2.0"
     },
     "autoload": {
         "psr-4": {
