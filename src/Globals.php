@@ -2,6 +2,7 @@
 namespace GCWorld\Globals;
 
 use ForceUTF8\Encoding;
+use Ramsey\Uuid\Uuid;
 
 /**
  * Globals
@@ -32,6 +33,7 @@ class Globals
     const FILTER_ARRAY      = 5;
     const FILTER_JSON_OBJ   = 6;
     const FILTER_JSON_ARRAY = 7;
+    const FILTER_UUID       = 8;
 
     /** @var string */
     private $_sGlobal = '';
@@ -99,10 +101,10 @@ class Globals
 
         // BOOL
         $tmp = is_scalar($item) ? strtolower($item) : $item;
-        if (is_bool($item) || in_array($tmp, ['false', 'true', 'y', 'n'], true)) {
-            if (in_array($tmp, ['false', 'n'], true)) {
+        if (is_bool($item) || in_array($tmp, ['false', 'true', 'y', 'n', 'Y', 'N'], true)) {
+            if (in_array($tmp, ['false', 'n', 'N'], true)) {
                 $item = false;
-            } elseif (in_array($tmp, ['true', 'y'], true)) {
+            } elseif (in_array($tmp, ['true', 'y', 'Y'], true)) {
                 $item = true;
             }
 
@@ -220,6 +222,21 @@ class Globals
                 case in_array($this->_iSpecialFilterType, [self::FILTER_JSON_OBJ, self::FILTER_JSON_ARRAY]):
                     $tmp     = json_decode($v, ($this->_iSpecialFilterType == self::FILTER_JSON_ARRAY));
                     $var[$k] = ($tmp === false ? null : $tmp);
+                break;
+                case $this->_iSpecialFilterType == self::FILTER_UUID:
+                    $pattern = '([a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12})';
+                    if (\preg_match('#^/?'.$pattern.'/?$#', $v)) {
+                        $var[$k] = $v;
+                    } elseif (strlen($v)==16) {
+                        try {
+                            $cUuid   = Uuid::fromBytes($v);
+                            $var[$k] = $cUuid->toString();
+                        } catch  (\Exception $e) {
+                            $var[$k] = '';
+                        }
+                    } else {
+                        $var[$k] = '';
+                    }
                 break;
                 case $this->_iFilterType === FILTER_CALLBACK:
                     $var[$k] = filter_var($v, $this->_iFilterType, $this->_callback);
@@ -611,6 +628,18 @@ class Globals
     public function json(bool $asArray)
     {
         $this->_iSpecialFilterType = $asArray ? self::FILTER_JSON_ARRAY : self::FILTER_JSON_OBJ;
+
+        return $this;
+    }
+
+    /**
+     * FILTER_UUID
+     *
+     * @return $this
+     */
+    public function uuid()
+    {
+        $this->_iSpecialFilterType = self::FILTER_UUID;
 
         return $this;
     }

@@ -18,7 +18,8 @@
     "require": {
         "php": ">=7.1",
         "ext-json":"*",
-        "neitanod/forceutf8": "^2.0"
+        "neitanod/forceutf8": "^2.0",
+        "ramsey/uuid": "^3.8"
     },
     "autoload": {
         "psr-4": {
