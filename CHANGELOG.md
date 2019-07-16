@@ -7,6 +7,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 
 
+## [2.0.8](https://github.com/KongHack/Globals/releases/tag/2.0.8)
+  - @GameCharmer UUID String and Byte options
+
+
+
 ## [2.0.7](https://github.com/KongHack/Globals/releases/tag/2.0.7)
  - @GameCharmer Added uuid filter
 
