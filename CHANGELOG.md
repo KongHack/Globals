@@ -7,6 +7,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 
 
+## [2.0.9](https://github.com/KongHack/Globals/releases/tag/2.0.9)
+ - @GameCharmer Fix issue with constant
+
+
+
 ## [2.0.8](https://github.com/KongHack/Globals/releases/tag/2.0.8)
   - @GameCharmer UUID String and Byte options
 

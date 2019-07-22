@@ -4,6 +4,7 @@ namespace GCWorld\Globals;
 use Exception;
 use ForceUTF8\Encoding;
 use Ramsey\Uuid\Uuid;
+use stdClass;
 
 /**
  * Globals
@@ -662,7 +663,7 @@ class Globals
      */
     public function uuid(bool $asBytes = false)
     {
-        $this->_iSpecialFilterType = $asBytes ? self::FILTER_UUID_BINARY | self::FILTER_UUID_STRING;
+        $this->_iSpecialFilterType = $asBytes ? self::FILTER_UUID_BINARY : self::FILTER_UUID_STRING;
 
         return $this;
     }
@@ -710,7 +711,7 @@ class Globals
             case self::FILTER_ARRAY:
                 return [];
             case self::FILTER_JSON_OBJ:
-                return new \stdClass();
+                return new stdClass();
             case self::FILTER_JSON_ARRAY:
                 return [];
         }
