@@ -662,7 +662,7 @@ class Globals
      */
     public function uuid(bool $asBytes = false)
     {
-        $this->_iSpecialFilterType = $asBytes ? self::FILTER_UUID_BINARY | self:self::FILTER_UUID_STRING;
+        $this->_iSpecialFilterType = $asBytes ? self::FILTER_UUID_BINARY | self::FILTER_UUID_STRING;
 
         return $this;
     }
