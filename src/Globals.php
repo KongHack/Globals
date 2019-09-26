@@ -234,7 +234,7 @@ class Globals
 
                     try {
                         $cUuid = Uuid::fromString($v);
-                        if($this->_iSpecialFilterType = self::FILTER_UUID_STRING) {
+                        if($this->_iSpecialFilterType == self::FILTER_UUID_STRING) {
                             $var[$k] = $cUuid->toString();
                             break;
                         } else {
@@ -247,7 +247,7 @@ class Globals
 
                     try {
                         $cUuid = Uuid::fromBytes($v);
-                        if($this->_iSpecialFilterType = self::FILTER_UUID_STRING) {
+                        if($this->_iSpecialFilterType == self::FILTER_UUID_STRING) {
                             $var[$k] = $cUuid->toString();
                             break;
                         } else {
