@@ -231,6 +231,14 @@ class Globals
                         $var[$k] = '';
                         break;
                     }
+                    if($v == '00000000-0000-0000-0000-000000000000') {
+                        if($this->_iSpecialFilterType == self::FILTER_UUID_STRING) {
+                            $var[$k] = '00000000-0000-0000-0000-000000000000';
+                        } else {
+                            $var[$k] = '';
+                        }
+                        break;
+                    }
 
                     try {
                         $cUuid = Uuid::fromString($v);
