@@ -7,6 +7,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 
 
+## [2.0.11](https://github.com/KongHack/Globals/releases/tag/2.0.11)
+ - @GameCharmer compensate for all 0 UUID
+
+
 ## [2.0.10](https://github.com/KongHack/Globals/releases/tag/2.0.10)
  - @GameCharmer fix comparator in UUID binary response
 
