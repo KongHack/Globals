@@ -8,11 +8,6 @@
         {
             "name": "GameCharmer",
             "email": "admin@gamecharmer.com"
-        },
-        {
-            "name": "Anthony Moral",
-            "email": "contact@coercive.fr",
-            "homepage": "http://coercive.fr"
         }
     ],
     "require": {
@@ -23,8 +18,7 @@
     },
     "autoload": {
         "psr-4": {
-            "GCWorld\\Globals\\": "src/",
-            "Coercive\\Utility\\Globals\\": "src_transition/"
+            "GCWorld\\Globals\\": "src/"
         }
     }
 }

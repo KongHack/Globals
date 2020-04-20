@@ -1,8 +1,8 @@
 <?php
 namespace GCWorld\Globals;
 
-use Exception;
 use ForceUTF8\Encoding;
+use Ramsey\Uuid\Exception\InvalidUuidStringException;
 use Ramsey\Uuid\Uuid;
 use stdClass;
 
@@ -25,7 +25,7 @@ use stdClass;
  * @method 		Globals|mixed 	SERVER($name = null, $value = null)
  * @method 		Globals|mixed 	SESSION($name = null, $value = null)
  */
-class Globals
+abstract class Globals
 {
 
     const FILTER_OCTAL       = 1;
@@ -226,14 +226,14 @@ class Globals
                     $tmp     = json_decode($v, ($this->_iSpecialFilterType == self::FILTER_JSON_ARRAY));
                     $var[$k] = ($tmp === false ? null : $tmp);
                 break;
-                case in_array($this->_iSpecialFilterType, [self::FILTER_UUID_STRING,self::FILTER_UUID_BINARY]):
+                case in_array($this->_iSpecialFilterType, [self::FILTER_UUID_STRING, self::FILTER_UUID_BINARY]):
                     if(empty($v)) {
                         $var[$k] = '';
                         break;
                     }
-                    if($v == '00000000-0000-0000-0000-000000000000') {
-                        if($this->_iSpecialFilterType == self::FILTER_UUID_STRING) {
-                            $var[$k] = '00000000-0000-0000-0000-000000000000';
+                    if($v === '00000000-0000-0000-0000-000000000000') {
+                        if($this->_iSpecialFilterType === self::FILTER_UUID_STRING) {
+                            $var[$k] = $v;
                         } else {
                             $var[$k] = '';
                         }
@@ -242,27 +242,14 @@ class Globals
 
                     try {
                         $cUuid = Uuid::fromString($v);
-                        if($this->_iSpecialFilterType == self::FILTER_UUID_STRING) {
+                        if($this->_iSpecialFilterType === self::FILTER_UUID_STRING) {
                             $var[$k] = $cUuid->toString();
                             break;
                         } else {
                             $var[$k] = $cUuid->getBytes();
                             break;
                         }
-                    } catch (Exception $e) {
-                        // Fail over
-                    }
-
-                    try {
-                        $cUuid = Uuid::fromBytes($v);
-                        if($this->_iSpecialFilterType == self::FILTER_UUID_STRING) {
-                            $var[$k] = $cUuid->toString();
-                            break;
-                        } else {
-                            $var[$k] = $cUuid->getBytes();
-                            break;
-                        }
-                    } catch (Exception $e) {
+                    } catch (InvalidUuidStringException $e) {
                         // Fail over
                     }
 

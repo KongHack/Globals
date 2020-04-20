@@ -7,6 +7,13 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 
 
+## [3.0.0](https://github.com/KongHack/Globals/releases/tag/3.0.0)
+ - @GameCharmer Remove deprecated class
+ - @GameCharmer Change Globals to Abstract class to force people to extend it
+ - @GameCharmer Disable UTF8 Fix when getting UUID via binary
+ - @GameCharmer Switch UUID Exception handling
+
+
 ## [2.0.11](https://github.com/KongHack/Globals/releases/tag/2.0.11)
  - @GameCharmer compensate for all 0 UUID
 
