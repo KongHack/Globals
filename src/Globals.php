@@ -25,7 +25,7 @@ use stdClass;
  * @method 		Globals|mixed 	SERVER($name = null, $value = null)
  * @method 		Globals|mixed 	SESSION($name = null, $value = null)
  */
-abstract class Globals
+class Globals
 {
 
     const FILTER_OCTAL       = 1;
@@ -39,27 +39,27 @@ abstract class Globals
     const FILTER_UUID_BINARY = 9;
 
     /** @var string */
-    private $_sGlobal = '';
+    protected $_sGlobal = '';
 
     /** @var bool */
-    private $_bFilter = true;
+    protected $_bFilter = true;
 
     /** @var bool */
-    private $_bDefaults = false;
+    protected $_bDefaults = false;
 
     /** @var int */
-    private $_iFilterType = 0;
+    protected $_iFilterType = 0;
 
     /** @var int */
-    private $_iSpecialFilterType = 0;
+    protected $_iSpecialFilterType = 0;
 
     /** @var callable|null */
-    private $_callback = null;
+    protected $_callback = null;
 
     /**
      * @var bool
      */
-    private $_bUTF8 = true;
+    protected $_bUTF8 = true;
 
     /**
      * SET GLOBAL
@@ -67,7 +67,7 @@ abstract class Globals
      * @param string $name
      * @return bool
      */
-    private function _setGlobal(string $name): bool
+    protected function _setGlobal(string $name): bool
     {
         // PREPARE
         $name = '_'.strtoupper($name);
@@ -90,7 +90,7 @@ abstract class Globals
      * @param mixed $item
      * @return mixed
      */
-    private function _autoFilter($item)
+    protected function _autoFilter($item)
     {
         // NULL
         if (null === $item) {
@@ -145,7 +145,7 @@ abstract class Globals
      * @param string $name
      * @return null|mixed
      */
-    private function _get(string $name)
+    protected function _get(string $name)
     {
         global ${$this->_sGlobal};
 
@@ -188,7 +188,7 @@ abstract class Globals
      * @param array $var
      * @return array
      */
-    private function executeFiltration(array $var)
+    protected function executeFiltration(array $var)
     {
         foreach ($var as $k => $v) {
             if (is_array($v)) {
@@ -282,7 +282,7 @@ abstract class Globals
      * @param mixed  $value
      * @return bool
      */
-    private function _set(string $name, $value): bool
+    protected function _set(string $name, $value): bool
     {
         global ${$this->_sGlobal};
 

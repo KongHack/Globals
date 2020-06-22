@@ -7,6 +7,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 
 
+## [3.0.1](https://github.com/KongHack/Globals/releases/tag/3.0.1)
+ - @GameCharmer Swap back to non-abstract class, switch private properties/methods to protected
+
+
+
 ## [3.0.0](https://github.com/KongHack/Globals/releases/tag/3.0.0)
  - @GameCharmer Remove deprecated class
  - @GameCharmer Change Globals to Abstract class to force people to extend it
