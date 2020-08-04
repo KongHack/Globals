@@ -190,6 +190,8 @@ class Globals
      */
     protected function executeFiltration(array $var)
     {
+        $ignoreFilter = [];
+
         foreach ($var as $k => $v) {
             if (is_array($v)) {
                 $var[$k] = $this->executeFiltration($v);
@@ -198,10 +200,10 @@ class Globals
             switch (true) {
                 case $this->_iSpecialFilterType == self::FILTER_OCTAL:
                     $var[$k] = octdec($v);
-                break;
+                    break;
                 case $this->_iSpecialFilterType == self::FILTER_TAGS:
                     $var[$k] = trim(strip_tags($v));
-                break;
+                    break;
                 case $this->_iSpecialFilterType == self::FILTER_DATE:
                     $var[$k] = trim(strip_tags($v));
                     if (!empty($var[$k])) {
@@ -211,7 +213,7 @@ class Globals
                         }
                     }
                     $var[$k] = '0000-00-00';
-                break;
+                    break;
                 case $this->_iSpecialFilterType == self::FILTER_DATE_TIME:
                     $var[$k] = trim(strip_tags($v));
                     if (!empty($var[$k])) {
@@ -221,17 +223,18 @@ class Globals
                         }
                     }
                     $var[$k] = '0000-00-00 00:00:00';
-                break;
+                    break;
                 case in_array($this->_iSpecialFilterType, [self::FILTER_JSON_OBJ, self::FILTER_JSON_ARRAY]):
                     $tmp     = json_decode($v, ($this->_iSpecialFilterType == self::FILTER_JSON_ARRAY));
                     $var[$k] = ($tmp === false ? null : $tmp);
-                break;
+                    break;
                 case in_array($this->_iSpecialFilterType, [self::FILTER_UUID_STRING, self::FILTER_UUID_BINARY]):
+                    $ignoreFilter[] = $k;
                     if(empty($v)) {
                         $var[$k] = '';
                         break;
                     }
-                    if($v === '00000000-0000-0000-0000-000000000000') {
+                    if($v === Uuid::NIL) {
                         if($this->_iSpecialFilterType === self::FILTER_UUID_STRING) {
                             $var[$k] = $v;
                         } else {
@@ -253,23 +256,23 @@ class Globals
                         // Fail over
                     }
 
-                    $var[$k] = '';
-                break;
+                    $var[$k] = null;
+                    break;
                 case $this->_iFilterType === FILTER_CALLBACK:
                     $var[$k] = filter_var($v, $this->_iFilterType, $this->_callback);
-                break;
+                    break;
                 case $this->_iFilterType > 0:
                     $var[$k] = filter_var($v, $this->_iFilterType);
-                break;
+                    break;
                 case $this->_iSpecialFilterType == self::FILTER_ARRAY:
                 default:
                     $var[$k] = $this->_bFilter ? $this->_autoFilter($v) : $v;
-                break;
+                    break;
             }
         }
 
         if($this->_bUTF8) {
-            $var = $this->fixUTF8($var);
+            $var = $this->fixUTF8($var, $ignoreFilter);
         }
 
         return $var;
@@ -745,12 +748,16 @@ class Globals
 
     /**
      * @param mixed $input
+     * @param array $ignoreFilter
      * @return mixed
      */
-    protected function fixUTF8($input)
+    protected function fixUTF8($input, array $ignoreFilter = [])
     {
         if(is_array($input)) {
             foreach($input as $k => $v) {
+                if(in_array($k, $ignoreFilter)) {
+                    continue;
+                }
                 $input[$k] = $this->fixUTF8($v);
             }
         }
