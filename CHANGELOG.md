@@ -7,6 +7,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 
 
+## [3.0.2](https://github.com/KongHack/Globals/releases/tag/3.0.2)
+ - @GameCharmer Fix issue where we were UTF-8 "fixing" Binary16 UUIDs
+
+
+
 ## [3.0.1](https://github.com/KongHack/Globals/releases/tag/3.0.1)
  - @GameCharmer Swap back to non-abstract class, switch private properties/methods to protected
 
