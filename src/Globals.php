@@ -13,7 +13,7 @@ use stdClass;
  * @link		@link https://github.com/KongHack/Globals
  *
  * @author  	GameCharmer <admin@gamecharmer.com> | Anthony Moral <contact@coercive.fr>
- * @copyright   2018 GameCharmer | 2016 - 2018 Anthony Moral
+ * @copyright   2018 - 2020 GameCharmer | 2016 - 2018 Anthony Moral
  * @license 	MIT
  *
  * @method 		Globals|mixed 	COOKIE($name = null, $value = null)
@@ -104,10 +104,10 @@ class Globals
 
         // BOOL
         $tmp = is_scalar($item) ? strtolower($item) : $item;
-        if (is_bool($item) || in_array($tmp, ['false', 'true', 'y', 'n', 'Y', 'N'], true)) {
-            if (in_array($tmp, ['false', 'n', 'N'], true)) {
+        if (is_bool($item) || in_array($tmp, ['false', 'true', 'y', 'n'], true)) {
+            if (in_array($tmp, ['false', 'n'], true)) {
                 $item = false;
-            } elseif (in_array($tmp, ['true', 'y', 'Y'], true)) {
+            } elseif (in_array($tmp, ['true', 'y'], true)) {
                 $item = true;
             }
 
@@ -262,6 +262,10 @@ class Globals
                     $var[$k] = filter_var($v, $this->_iFilterType, $this->_callback);
                     break;
                 case $this->_iFilterType > 0:
+                    if(!is_scalar($v)) {
+                        $var[$k] = null;
+                        break;
+                    }
                     $var[$k] = filter_var($v, $this->_iFilterType);
                     break;
                 case $this->_iSpecialFilterType == self::FILTER_ARRAY:
