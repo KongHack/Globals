@@ -14,7 +14,7 @@
         "php": ">=7.1",
         "ext-json":"*",
         "neitanod/forceutf8": "^2.0",
-        "ramsey/uuid": "^3.8"
+        "ramsey/uuid": ">=4.0"
     },
     "autoload": {
         "psr-4": {
