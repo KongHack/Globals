@@ -7,6 +7,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 
 
+## [3.1.1](https://github.com/KongHack/Globals/releases/tag/3.1.1)
+ - @GameCharmer Add WTF method for global loading
+
+
+
 ## [3.1.0](https://github.com/KongHack/Globals/releases/tag/3.1.0)
  - @GameCharmer Update UUID Library
 

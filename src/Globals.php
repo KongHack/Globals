@@ -771,4 +771,20 @@ class Globals
 
         return $input;
     }
+
+    /**
+     * Never call this.  It's necessary in some PHP instances where
+     * the super globals are not loaded at all unless they are actually seen
+     * in code.  I have no idea why, please enlighten me oh PHP gurus
+     */
+    protected function loadGlobals()
+    {
+        print_r($_GET);
+        print_r($_POST);
+        print_r($_REQUEST);
+        print_r($_SERVER);
+        print_r($_FILES);
+        print_r($_ENV);
+        print_r($_COOKIE);
+    }
 }
