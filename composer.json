@@ -11,9 +11,9 @@
         }
     ],
     "require": {
-        "php": ">=7.1",
+        "php": ">=8.0",
         "ext-json":"*",
-        "neitanod/forceutf8": "^2.0",
+        "ext-mbstring": "*",
         "ramsey/uuid": ">=4.0"
     },
     "autoload": {

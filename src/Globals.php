@@ -757,6 +757,10 @@ class Globals
      */
     protected function fixUTF8($input, array $ignoreFilter = [])
     {
+        if(is_numeric($input)) {
+            return $input;
+        }
+
         if(is_array($input)) {
             foreach($input as $k => $v) {
                 if(in_array($k, $ignoreFilter)) {
@@ -764,9 +768,12 @@ class Globals
                 }
                 $input[$k] = $this->fixUTF8($v);
             }
+
+            return $input;
         }
+
         if(is_string($input)) {
-            $input = Encoding::fixUTF8($input, Encoding::ICONV_IGNORE);
+            return \mb_convert_encoding($input, 'UTF-8');
         }
 
         return $input;
