@@ -7,6 +7,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 
 
+## [3.3.0](https://github.com/KongHack/Globals/releases/tag/3.3.0)
+- @GameCharmer New Globals Interface
+
+
+
 ## [3.2.0](https://github.com/KongHack/Globals/releases/tag/3.2.0)
 - @GameCharmer Update for PHP 8.1
 - @GameCharmer neitanod/forceutf8 removed

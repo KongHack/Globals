@@ -25,19 +25,8 @@ use stdClass;
  * @method 		Globals|mixed 	SERVER($name = null, $value = null)
  * @method 		Globals|mixed 	SESSION($name = null, $value = null)
  */
-class Globals
+class Globals implements GlobalsInterface
 {
-
-    const FILTER_OCTAL       = 1;
-    const FILTER_TAGS        = 2;
-    const FILTER_DATE        = 3;
-    const FILTER_DATE_TIME   = 4;
-    const FILTER_ARRAY       = 5;
-    const FILTER_JSON_OBJ    = 6;
-    const FILTER_JSON_ARRAY  = 7;
-    const FILTER_UUID_STRING = 8;
-    const FILTER_UUID_BINARY = 9;
-
     /** @var string */
     protected $_sGlobal = '';
 
@@ -90,7 +79,7 @@ class Globals
      * @param mixed $item
      * @return mixed
      */
-    protected function _autoFilter($item)
+    protected function _autoFilter(mixed $item): mixed
     {
         // NULL
         if (null === $item) {
@@ -145,7 +134,7 @@ class Globals
      * @param string $name
      * @return null|mixed
      */
-    protected function _get(string $name)
+    protected function _get(string $name): mixed
     {
         global ${$this->_sGlobal};
 
@@ -188,7 +177,7 @@ class Globals
      * @param array $var
      * @return array
      */
-    protected function executeFiltration(array $var)
+    protected function executeFiltration(array $var): array
     {
         $ignoreFilter = [];
 
@@ -289,7 +278,7 @@ class Globals
      * @param mixed  $value
      * @return bool
      */
-    protected function _set(string $name, $value): bool
+    protected function _set(string $name, mixed $value): bool
     {
         global ${$this->_sGlobal};
 
@@ -308,7 +297,7 @@ class Globals
      * @param string $name
      * @return array|null
      */
-    public function getKeys(string $name)
+    public function getKeys(string $name): ?array
     {
         if (substr($name, 0, 1) !== '_') {
             $name = '_'.$name;
@@ -330,7 +319,7 @@ class Globals
      * @param mixed $var
      * @return mixed
      */
-    public function autoFilterManualVar($var)
+    public function autoFilterManualVar(mixed $var): mixed
     {
         return $this->_autoFilter($var);
     }
@@ -339,9 +328,9 @@ class Globals
      * (DE)ACTIVATE FILTER
      *
      * @param bool $state
-     * @return Globals
+     * @return static
      */
-    public function filter(bool $state): Globals
+    public function filter(bool $state): static
     {
         $this->_bFilter = (bool)$state;
 
@@ -354,7 +343,7 @@ class Globals
      * @param bool $state
      * @return void
      */
-    public function defaults(bool $state)
+    public function defaults(bool $state): void
     {
         $this->_bDefaults = (bool)$state;
     }
@@ -365,7 +354,7 @@ class Globals
      * @param bool $state
      * @return void
      */
-    public function utf8(bool $state)
+    public function utf8(bool $state): void
     {
         $this->_bUTF8 = (bool)$state;
     }
@@ -413,7 +402,7 @@ class Globals
      * @param array  $arguments [0] Field Name, [1] Set Value [optional]
      * @return mixed
      */
-    public function __call(string $name, array $arguments = [])
+    public function __call(string $name, array $arguments = []): mixed
     {
         // EXIT
         if (!$name || !$this->_setGlobal($name)) {
@@ -437,9 +426,9 @@ class Globals
     /**
      * FILTER_OCTAL
      *
-     * @return Globals
+     * @return static
      */
-    public function octal(): Globals
+    public function octal(): static
     {
         $this->_iSpecialFilterType = self::FILTER_OCTAL;
 
@@ -449,9 +438,9 @@ class Globals
     /**
      * FILTER_VALIDATE_INT
      *
-     * @return Globals
+     * @return static
      */
-    public function int(): Globals
+    public function int(): static
     {
         $this->_iFilterType = FILTER_VALIDATE_INT;
 
@@ -461,9 +450,9 @@ class Globals
     /**
      * FILTER_VALIDATE_FLOAT
      *
-     * @return Globals
+     * @return static
      */
-    public function float(): Globals
+    public function float(): static
     {
         $this->_iFilterType = FILTER_VALIDATE_FLOAT;
 
@@ -473,9 +462,9 @@ class Globals
     /**
      * FILTER_VALIDATE_BOOLEAN
      *
-     * @return Globals
+     * @return static
      */
-    public function bool(): Globals
+    public function bool(): static
     {
         $this->_iFilterType = FILTER_VALIDATE_BOOLEAN;
 
@@ -485,9 +474,9 @@ class Globals
     /**
      * FILTER_VALIDATE_IP
      *
-     * @return Globals
+     * @return static
      */
-    public function ip(): Globals
+    public function ip(): static
     {
         $this->_iFilterType = FILTER_VALIDATE_IP;
 
@@ -498,9 +487,9 @@ class Globals
      * FILTER_FLAG_IPV4
      * CAUTION: Does not fucking work
      *
-     * @return Globals
+     * @return static
      */
-    public function ipv4(): Globals
+    public function ipv4(): static
     {
         $this->_iFilterType = FILTER_FLAG_IPV4;
 
@@ -511,9 +500,9 @@ class Globals
      * FILTER_FLAG_IPV6
      * CAUTION: Does not fucking work
      *
-     * @return Globals
+     * @return static
      */
-    public function ipv6(): Globals
+    public function ipv6(): static
     {
         $this->_iFilterType = FILTER_FLAG_IPV6;
 
@@ -525,9 +514,9 @@ class Globals
      *
      * @param $callback callable
      *
-     * @return Globals
+     * @return static
      */
-    public function callback(callable $callback): Globals
+    public function callback(callable $callback): static
     {
         $this->_iFilterType = FILTER_CALLBACK;
         $this->_callback    = $callback;
@@ -538,9 +527,9 @@ class Globals
     /**
      * FILTER_ARRAY
      *
-     * @return Globals
+     * @return static
      */
-    public function array(): Globals
+    public function array(): static
     {
         $this->_iSpecialFilterType = self::FILTER_ARRAY;
 
@@ -550,9 +539,9 @@ class Globals
     /**
      * FILTER_VALIDATE_EMAIL
      *
-     * @return Globals
+     * @return static
      */
-    public function email(): Globals
+    public function email(): static
     {
         $this->_iFilterType = FILTER_VALIDATE_EMAIL;
 
@@ -562,9 +551,9 @@ class Globals
     /**
      * FILTER_VALIDATE_URL
      *
-     * @return Globals
+     * @return static
      */
-    public function url(): Globals
+    public function url(): static
     {
         $this->_iFilterType = FILTER_VALIDATE_URL;
 
@@ -574,9 +563,9 @@ class Globals
     /**
      * FILTER_VALIDATE_URL
      *
-     * @return Globals
+     * @return static
      */
-    public function mac(): Globals
+    public function mac(): static
     {
         $this->_iFilterType = FILTER_VALIDATE_MAC;
 
@@ -586,9 +575,9 @@ class Globals
     /**
      * FILTER_TAGS
      *
-     * @return Globals
+     * @return static
      */
-    public function string(): Globals
+    public function string(): static
     {
         $this->_iSpecialFilterType = self::FILTER_TAGS;
 
@@ -598,9 +587,9 @@ class Globals
     /**
      * FILTER_DATE
      *
-     * @return Globals
+     * @return static
      */
-    public function date(): Globals
+    public function date(): static
     {
         $this->_iSpecialFilterType = self::FILTER_DATE;
 
@@ -610,9 +599,9 @@ class Globals
     /**
      * FILTER_DATE_TIME
      *
-     * @return Globals
+     * @return static
      */
-    public function dateTime(): Globals
+    public function dateTime(): static
     {
         $this->_iSpecialFilterType = self::FILTER_DATE_TIME;
 
@@ -622,9 +611,9 @@ class Globals
     /**
      * FILTER_SANITIZE_SPECIAL_CHARS
      *
-     * @return Globals
+     * @return static
      */
-    public function stringSpecial(): Globals
+    public function stringSpecial(): static
     {
         $this->_iFilterType = FILTER_SANITIZE_SPECIAL_CHARS;
 
@@ -634,9 +623,9 @@ class Globals
     /**
      * FILTER_SANITIZE_FULL_SPECIAL_CHARS
      *
-     * @return Globals
+     * @return static
      */
-    public function stringFull(): Globals
+    public function stringFull(): static
     {
         $this->_iFilterType = FILTER_SANITIZE_FULL_SPECIAL_CHARS;
 
@@ -647,9 +636,9 @@ class Globals
      * FILTER_JSON_ARRAY | FILTER_JSON_OBJ
      *
      * @param bool $asArray
-     * @return $this
+     * @return static
      */
-    public function json(bool $asArray)
+    public function json(bool $asArray): static
     {
         $this->_iSpecialFilterType = $asArray ? self::FILTER_JSON_ARRAY : self::FILTER_JSON_OBJ;
 
@@ -661,9 +650,9 @@ class Globals
      *
      * @param bool $asBytes
      *
-     * @return $this
+     * @return static
      */
-    public function uuid(bool $asBytes = false)
+    public function uuid(bool $asBytes = false): static
     {
         $this->_iSpecialFilterType = $asBytes ? self::FILTER_UUID_BINARY : self::FILTER_UUID_STRING;
 
@@ -673,9 +662,9 @@ class Globals
     /**
      * FILTER_DEFAULT
      *
-     * @return Globals
+     * @return static
      */
-    public function noFilter(): Globals
+    public function noFilter(): static
     {
         $this->_iFilterType = FILTER_DEFAULT;
 
@@ -685,7 +674,7 @@ class Globals
     /**
      * Used to reset any filter variables
      */
-    protected function reset()
+    protected function reset(): void
     {
         $this->_iSpecialFilterType = 0;
         $this->_iFilterType        = 0;
@@ -695,7 +684,7 @@ class Globals
     /**
      * @return mixed
      */
-    protected function returnDefault()
+    protected function returnDefault(): mixed
     {
         if (!$this->_bDefaults) {
             return null;
