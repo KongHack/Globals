@@ -153,7 +153,7 @@ class Globals implements GlobalsInterface
             $incoming = $this->executeFilter($incoming);
         }
 
-        if($this->FilterDataType) {
+        if($this->FilterDataType && !is_array($incoming)) {
             $incoming = $this->FilterDataType->cast($incoming);
         }
 
