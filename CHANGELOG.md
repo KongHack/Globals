@@ -7,6 +7,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 
 
+## [4.0.3](https://github.com/KongHack/Globals/releases/tag/4.0.3)
+- @GameCharmer Additional array enforcement
+
+
+
 ## [4.0.2](https://github.com/KongHack/Globals/releases/tag/4.0.2)
 - @GameCharmer Disable cast call on array
 

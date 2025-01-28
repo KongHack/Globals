@@ -141,6 +141,9 @@ class Globals implements GlobalsInterface
 
         if($this->ArrayLevels > 0) {
             $incoming = $this->executeArrayFilter($incoming);
+            if(!is_array($incoming)) {
+                $incoming = [];
+            }
         } elseif(is_array($incoming)) {
             if($this->FilterSpecialType) {
                 $incoming = $this->FilterSpecialType->defaultVal();
