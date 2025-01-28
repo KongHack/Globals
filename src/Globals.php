@@ -58,7 +58,6 @@ class Globals implements GlobalsInterface
 
         // SET
         $this->_sGlobal = $name;
-        $this->reset(); // Just to be safe
 
         return true;
     }
@@ -138,17 +137,33 @@ class Globals implements GlobalsInterface
             return $return;
         }
 
-        $var = ${$this->_sGlobal}[$name];
+        $incoming = ${$this->_sGlobal}[$name];
 
         if($this->ArrayLevels > 0) {
-            $return = $this->executeArrayFilter($var);
+            $incoming = $this->executeArrayFilter($incoming);
+        } elseif(is_array($incoming)) {
+            if($this->FilterSpecialType) {
+                $incoming = $this->FilterSpecialType->defaultVal();
+            } elseif($this->FilterDataType) {
+                $incoming = $this->FilterDataType->cast('');
+            } else {
+                $incoming = null;
+            }
         } else {
-            $return = $this->executeFilter($var);
+            $incoming = $this->executeFilter($incoming);
         }
 
-        $this->reset();
+        if($this->FilterDataType) {
+            $incoming = $this->FilterDataType->cast($incoming);
+        }
 
-        return $return;
+        if($this->_bDefaults && $incoming === null) {
+            $incoming = $this->returnDefault();
+        }
+
+        $this->reset($name == 'content_ind_logged_in');
+
+        return $incoming;
     }
 
     /**
@@ -213,7 +228,7 @@ class Globals implements GlobalsInterface
             return $this->safeJsonDecode($var, $this->FilterSpecialType == SpecialFilterTypeEnum::FILTER_JSON_OBJ);
         }
 
-        if($this->FilterSpecialType->isUuid()) {
+        if($this->FilterSpecialType?->isUuid()) {
             try {
                 $cUuid = Uuid::fromString($var);
             } catch (\Exception) {
@@ -487,7 +502,8 @@ class Globals implements GlobalsInterface
      */
     public function bool(): static
     {
-        $this->_iFilterType = FILTER_VALIDATE_BOOLEAN;
+        $this->_iFilterType   = FILTER_VALIDATE_BOOLEAN;
+        $this->FilterDataType = DataTypeEnum::TYPE_BOOL;
 
         return $this;
     }
@@ -499,7 +515,8 @@ class Globals implements GlobalsInterface
      */
     public function ip(): static
     {
-        $this->_iFilterType = FILTER_VALIDATE_IP;
+        $this->_iFilterType   = FILTER_VALIDATE_IP;
+        $this->FilterDataType = DataTypeEnum::TYPE_STRING;
 
         return $this;
     }
@@ -512,7 +529,8 @@ class Globals implements GlobalsInterface
      */
     public function ipv4(): static
     {
-        $this->_iFilterType = FILTER_FLAG_IPV4;
+        $this->_iFilterType   = FILTER_FLAG_IPV4;
+        $this->FilterDataType = DataTypeEnum::TYPE_STRING;
 
         return $this;
     }
@@ -525,7 +543,8 @@ class Globals implements GlobalsInterface
      */
     public function ipv6(): static
     {
-        $this->_iFilterType = FILTER_FLAG_IPV6;
+        $this->_iFilterType   = FILTER_FLAG_IPV6;
+        $this->FilterDataType = DataTypeEnum::TYPE_STRING;
 
         return $this;
     }
@@ -563,7 +582,8 @@ class Globals implements GlobalsInterface
      */
     public function email(): static
     {
-        $this->_iFilterType = FILTER_VALIDATE_EMAIL;
+        $this->_iFilterType   = FILTER_VALIDATE_EMAIL;
+        $this->FilterDataType = DataTypeEnum::TYPE_STRING;
 
         return $this;
     }
@@ -575,7 +595,8 @@ class Globals implements GlobalsInterface
      */
     public function url(): static
     {
-        $this->_iFilterType = FILTER_VALIDATE_URL;
+        $this->_iFilterType   = FILTER_VALIDATE_URL;
+        $this->FilterDataType = DataTypeEnum::TYPE_STRING;
 
         return $this;
     }
@@ -587,7 +608,8 @@ class Globals implements GlobalsInterface
      */
     public function mac(): static
     {
-        $this->_iFilterType = FILTER_VALIDATE_MAC;
+        $this->_iFilterType   = FILTER_VALIDATE_MAC;
+        $this->FilterDataType = DataTypeEnum::TYPE_STRING;
 
         return $this;
     }

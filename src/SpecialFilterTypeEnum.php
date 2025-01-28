@@ -65,6 +65,7 @@ enum SpecialFilterTypeEnum: int
             self::FILTER_DATE_TIME  => '0000-00-00 00:00:00',
             self::FILTER_JSON_OBJ   => new \stdClass(),
             self::FILTER_JSON_ARRAY => [],
+            default                 => null,
         };
     }
 
