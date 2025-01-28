@@ -7,6 +7,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 
 
+## [4.0.1](https://github.com/KongHack/Globals/releases/tag/4.0.1)
+- @GameCharmer Patch issue with closure2
+
+
+
 ## [4.0.0](https://github.com/KongHack/Globals/releases/tag/4.0.0)
 - @GameCharmer Internal Overhaul, new Enums, better array handling
 

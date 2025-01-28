@@ -208,18 +208,18 @@ class Globals implements GlobalsInterface
 
         // More complex filtration
         $var = match($this->FilterSpecialType) {
-            SpecialFilterTypeEnum::FILTER_DATE => function($var) {
+            SpecialFilterTypeEnum::FILTER_DATE => (function($var) {
                 if(!empty($var) && strtotime($var) !== false) {
                     return date('Y-m-d', strtotime($var));
                 }
                 return '0000-00-00';
-            },
-            SpecialFilterTypeEnum::FILTER_DATE_TIME => function($var) {
+            })($var),
+            SpecialFilterTypeEnum::FILTER_DATE_TIME => (function($var) {
                 if(!empty($var) && strtotime($var) !== false) {
                     return date('Y-m-d H:i:s', strtotime($var));
                 }
                 return '0000-00-00 00:00:00';
-            },
+            })($var),
             default => $var,
         };
 
