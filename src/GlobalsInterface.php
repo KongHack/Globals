@@ -22,17 +22,6 @@ namespace GCWorld\Globals;
  */
 interface GlobalsInterface
 {
-
-    const FILTER_OCTAL       = 1;
-    const FILTER_TAGS        = 2;
-    const FILTER_DATE        = 3;
-    const FILTER_DATE_TIME   = 4;
-    const FILTER_ARRAY       = 5;
-    const FILTER_JSON_OBJ    = 6;
-    const FILTER_JSON_ARRAY  = 7;
-    const FILTER_UUID_STRING = 8;
-    const FILTER_UUID_BINARY = 9;
-
     /**
      * PUBLIC AUTO FILTER VAR
      *
