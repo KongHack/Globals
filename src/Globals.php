@@ -366,7 +366,7 @@ class Globals implements GlobalsInterface
      */
     public function defaults(bool $state): void
     {
-        $this->_bDefaults = (bool)$state;
+        $this->_bDefaults = $state;
     }
 
     /**
@@ -377,7 +377,7 @@ class Globals implements GlobalsInterface
      */
     public function utf8(bool $state): void
     {
-        $this->_bUTF8 = (bool)$state;
+        $this->_bUTF8 = $state;
     }
 
     /**
