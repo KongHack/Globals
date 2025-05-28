@@ -202,11 +202,12 @@ class Globals implements GlobalsInterface
 
         // Base filtration up front
         $var = match($this->FilterSpecialType) {
-            SpecialFilterTypeEnum::FILTER_OCTAL => octdec($var),
+            SpecialFilterTypeEnum::FILTER_OCTAL     => octdec($var),
             SpecialFilterTypeEnum::FILTER_TAGS,
             SpecialFilterTypeEnum::FILTER_DATE,
             SpecialFilterTypeEnum::FILTER_DATE_TIME => trim(strip_tags($var)),
-            default => $var,
+            SpecialFilterTypeEnum::FILTER_BASE64    => trim($var),
+            default                                 => $var,
         };
 
         // More complex filtration
@@ -222,6 +223,9 @@ class Globals implements GlobalsInterface
                     return date('Y-m-d H:i:s', strtotime($var));
                 }
                 return '0000-00-00 00:00:00';
+            })($var),
+            SpecialFilterTypeEnum::FILTER_BASE64 => (function($var) {
+                return \base64_decode($var, true) ?: null;
             })($var),
             default => $var,
         };
@@ -625,6 +629,19 @@ class Globals implements GlobalsInterface
     public function string(): static
     {
         $this->FilterSpecialType = SpecialFilterTypeEnum::FILTER_TAGS;
+        $this->FilterDataType    =  $this->FilterSpecialType->dataType();
+
+        return $this;
+    }
+
+    /**
+     * FILTER_TAGS
+     *
+     * @return static
+     */
+    public function base64(): static
+    {
+        $this->FilterSpecialType = SpecialFilterTypeEnum::FILTER_BASE64;
         $this->FilterDataType    =  $this->FilterSpecialType->dataType();
 
         return $this;

@@ -14,6 +14,7 @@ enum SpecialFilterTypeEnum: int
     case FILTER_JSON_ARRAY  = 7;
     case FILTER_UUID_STRING = 8;
     case FILTER_UUID_BINARY = 9;
+    case FILTER_BASE64      = 10;
 
     /**
      * @return DataTypeEnum|null
@@ -24,6 +25,7 @@ enum SpecialFilterTypeEnum: int
             self::FILTER_OCTAL,
             self::FILTER_TAGS,
             self::FILTER_DATE,
+            self::FILTER_BASE64,
             self::FILTER_DATE_TIME => DataTypeEnum::TYPE_STRING,
             default                => null,
         };
