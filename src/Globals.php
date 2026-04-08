@@ -1,7 +1,6 @@
 <?php
 namespace GCWorld\Globals;
 
-use ForceUTF8\Encoding;
 use Ramsey\Uuid\Uuid;
 use stdClass;
 
@@ -12,7 +11,7 @@ use stdClass;
  * @link		@link https://github.com/KongHack/Globals
  *
  * @author  	GameCharmer <admin@gamecharmer.com> | Anthony Moral <contact@coercive.fr>
- * @copyright   2018 - 2020 GameCharmer | 2016 - 2018 Anthony Moral
+ * @copyright   2018 - 2026 GameCharmer | 2016 - 2018 Anthony Moral
  * @license 	MIT
  *
  * @method 		Globals|mixed 	COOKIE($name = null, $value = null)
@@ -204,6 +203,7 @@ class Globals implements GlobalsInterface
         $var = match($this->FilterSpecialType) {
             SpecialFilterTypeEnum::FILTER_OCTAL     => octdec($var),
             SpecialFilterTypeEnum::FILTER_TAGS,
+            SpecialFilterTypeEnum::FILTER_STRING_STRICT,
             SpecialFilterTypeEnum::FILTER_DATE,
             SpecialFilterTypeEnum::FILTER_DATE_TIME => trim(strip_tags($var)),
             SpecialFilterTypeEnum::FILTER_BASE64    => trim($var),
@@ -226,6 +226,11 @@ class Globals implements GlobalsInterface
             })($var),
             SpecialFilterTypeEnum::FILTER_BASE64 => (function($var) {
                 return \base64_decode($var, true) ?: null;
+            })($var),
+            SpecialFilterTypeEnum::FILTER_STRING_STRICT => (function($var) {
+                $var = \preg_replace("/[^[:alnum:] '\\-]/", '', $var);
+                $var = \preg_replace('/ +/', ' ', $var);
+                return \trim($var);
             })($var),
             default => $var,
         };
@@ -629,6 +634,19 @@ class Globals implements GlobalsInterface
     public function string(): static
     {
         $this->FilterSpecialType = SpecialFilterTypeEnum::FILTER_TAGS;
+        $this->FilterDataType    =  $this->FilterSpecialType->dataType();
+
+        return $this;
+    }
+
+    /**
+     * Strip non-"name safe" characters
+     *
+     * @return static
+     */
+    public function stringStrict(): static
+    {
+        $this->FilterSpecialType = SpecialFilterTypeEnum::FILTER_STRING_STRICT;
         $this->FilterDataType    =  $this->FilterSpecialType->dataType();
 
         return $this;

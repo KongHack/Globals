@@ -8,7 +8,7 @@ namespace GCWorld\Globals;
  * @link		@link https://github.com/KongHack/Globals
  *
  * @author  	GameCharmer <admin@gamecharmer.com> | Anthony Moral <contact@coercive.fr>
- * @copyright   2018 - 2020 GameCharmer | 2016 - 2018 Anthony Moral
+ * @copyright   2018 - 2026 GameCharmer | 2016 - 2018 Anthony Moral
  * @license 	MIT
  *
  * @method 		Globals|mixed 	COOKIE($name = null, $value = null)
@@ -192,6 +192,13 @@ interface GlobalsInterface
      * @return static
      */
     public function stringSpecial(): static;
+
+    /**
+     * FILTER_STRING_STRICT
+     *
+     * @return static
+     */
+    public function stringStrict(): static;
 
     /**
      * FILTER_SANITIZE_FULL_SPECIAL_CHARS

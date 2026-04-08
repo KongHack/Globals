@@ -6,15 +6,16 @@ namespace GCWorld\Globals;
  */
 enum SpecialFilterTypeEnum: int
 {
-    case FILTER_OCTAL       = 1;
-    case FILTER_TAGS        = 2;
-    case FILTER_DATE        = 3;
-    case FILTER_DATE_TIME   = 4;
-    case FILTER_JSON_OBJ    = 6;
-    case FILTER_JSON_ARRAY  = 7;
-    case FILTER_UUID_STRING = 8;
-    case FILTER_UUID_BINARY = 9;
-    case FILTER_BASE64      = 10;
+    case FILTER_OCTAL         = 1;
+    case FILTER_TAGS          = 2;
+    case FILTER_DATE          = 3;
+    case FILTER_DATE_TIME     = 4;
+    case FILTER_JSON_OBJ      = 6;
+    case FILTER_JSON_ARRAY    = 7;
+    case FILTER_UUID_STRING   = 8;
+    case FILTER_UUID_BINARY   = 9;
+    case FILTER_BASE64        = 10;
+    case FILTER_STRING_STRICT = 11;
 
     /**
      * @return DataTypeEnum|null
