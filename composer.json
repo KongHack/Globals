@@ -2,7 +2,7 @@
     "name": "gcworld/globals",
     "type": "library",
     "description": "Globals",
-    "homepage": "http://gamecharmer.com",
+    "homepage": "https://gamecharmer.com",
     "license": "MIT",
     "authors": [
         {
@@ -11,10 +11,10 @@
         }
     ],
     "require": {
-        "php": ">=8.2",
+        "php": ">=8.4",
         "ext-json":"*",
         "ext-mbstring": "*",
-        "ramsey/uuid": ">=4.0"
+        "ramsey/uuid": "^4.9"
     },
     "autoload": {
         "psr-4": {

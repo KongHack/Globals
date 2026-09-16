@@ -10,6 +10,8 @@ felt it was a better idea to try and separate namespaces and packages.
 
 Note: This package contains a class used to ease transition pains that will conflict with the original.
 
+### Version
+4.0.6
 
 Get
 ---
@@ -119,3 +121,15 @@ $Result = $oGlobals->autoFilterManualVar($YourVar);
  - The ``string()`` filter runs a trim(strip_tags()) and may not be what you need.  The ``stringSpecial()`` is the filter equivalent function
  - The ``callback`` filter requires a callable. Previously, this just set the filter type and didn't function properly
  - The ``date()`` and ``dateTime`` filters check against ``strtotime($input) !== false`` before translating to a Y-m-d( H:i:s) format 
+
+Release Process
+---------------
+
+Releases use bare semantic-version tags such as `4.0.6`. The local release tooling
+updates `VERSION` and the value below `### Version`, and prevents tagging until a
+matching release section exists in `CHANGELOG.md`.
+
+Pushing the tag runs the complete PHP quality matrix. After it passes, GitHub
+Actions creates the GitHub Release from that version's changelog section.
+Packagist continues to receive the tag through the repository's existing GitHub
+integration. Release tags must not be moved or reused.
