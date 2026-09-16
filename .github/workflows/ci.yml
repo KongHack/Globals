@@ -69,8 +69,8 @@ jobs:
       - name: Audit locked dependencies
         run: composer audit --locked --no-interaction
 
-      - name: Lint PHP sources
-        run: find src -type f -name '*.php' -print0 | xargs -0 -n1 php -l
+      - name: Run quality suite
+        run: composer check
 
   release:
     name: Create GitHub release

@@ -23,7 +23,7 @@ Usage
 -----
 
 ```php
-use GCWorld\Globals;
+use GCWorld\Globals\Globals;
 
 # LOAD
 $oGlobals = new Globals;

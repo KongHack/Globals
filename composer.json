@@ -20,5 +20,21 @@
         "psr-4": {
             "GCWorld\\Globals\\": "src/"
         }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "GCWorld\\Globals\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "lint": "find src tests -name '*.php' -print0 | xargs -0 -n1 php -l",
+        "test": "phpunit",
+        "check": [
+            "@lint",
+            "@test"
+        ]
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^12.0"
     }
 }
