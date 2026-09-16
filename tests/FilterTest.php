@@ -115,6 +115,40 @@ final class FilterTest extends GlobalsTestCase
         self::assertEquals(new \stdClass(), $globals->json(false)->GET('invalid'));
     }
 
+    public function testJsonFiltersRejectScalarAndMismatchedContainerValues(): void
+    {
+        $_GET = [
+            'true' => 'true',
+            'number' => '42',
+            'null' => 'null',
+            'array' => '["first","second"]',
+        ];
+        $globals = new Globals();
+
+        foreach (['true', 'number', 'null'] as $key) {
+            self::assertSame([], $globals->json(true)->GET($key));
+            self::assertEquals(new \stdClass(), $globals->json(false)->GET($key));
+        }
+
+        self::assertEquals(new \stdClass(), $globals->json(false)->GET('array'));
+    }
+
+    public function testMostRecentlySelectedFilterReplacesEarlierFilterState(): void
+    {
+        $_GET = [
+            'htmlNumber' => '<b>42</b>',
+            'plainText' => 'forty-two',
+            'email' => 'person@example.com',
+            'mixedCaseHtml' => '<b>Mixed</b>',
+        ];
+        $globals = new Globals();
+
+        self::assertSame(0, $globals->string()->int()->GET('htmlNumber'));
+        self::assertSame('forty-two', $globals->int()->string()->GET('plainText'));
+        self::assertSame('person@example.com', $globals->ipv6()->email()->GET('email'));
+        self::assertSame('Mixed', $globals->callback(strtoupper(...))->string()->GET('mixedCaseHtml'));
+    }
+
     public function testUuidFiltersReturnCanonicalStringsAndBytes(): void
     {
         $uuid = '550e8400-e29b-41d4-a716-446655440000';

@@ -4,7 +4,8 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/KongHack/Globals)
-
+- @GameCharmer Fix JSON filters to safely return the requested empty container for scalar, invalid, or mismatched JSON values instead of throwing a `TypeError`
+- @GameCharmer Fix chained filter selection so the most recently selected filter replaces stale filter state
 
 
 ## [4.0.6](https://github.com/KongHack/Globals/releases/tag/4.0.6)

@@ -314,11 +314,15 @@ class Globals implements GlobalsInterface
 
         $out = \json_decode($json, !$obj);
 
-        if(!json_last_error()) {
-            return $out;
+        if(json_last_error() !== JSON_ERROR_NONE) {
+            return $obj ? new stdClass : [];
         }
 
-        return $obj ? new stdClass : [];
+        if($obj) {
+            return $out instanceof stdClass ? $out : new stdClass;
+        }
+
+        return \is_array($out) ? $out : [];
     }
 
     /**
@@ -477,8 +481,7 @@ class Globals implements GlobalsInterface
      */
     public function octal(): static
     {
-        $this->FilterSpecialType = SpecialFilterTypeEnum::FILTER_OCTAL;
-        $this->FilterDataType    = $this->FilterSpecialType->dataType();
+        $this->selectSpecialFilter(SpecialFilterTypeEnum::FILTER_OCTAL);
 
         return $this;
     }
@@ -490,8 +493,7 @@ class Globals implements GlobalsInterface
      */
     public function int(): static
     {
-        $this->_iFilterType = FILTER_VALIDATE_INT;
-        $this->FilterDataType = DataTypeEnum::TYPE_INT;
+        $this->selectStandardFilter(FILTER_VALIDATE_INT, DataTypeEnum::TYPE_INT);
 
         return $this;
     }
@@ -503,8 +505,7 @@ class Globals implements GlobalsInterface
      */
     public function float(): static
     {
-        $this->_iFilterType = FILTER_VALIDATE_FLOAT;
-        $this->FilterDataType = DataTypeEnum::TYPE_FLOAT;
+        $this->selectStandardFilter(FILTER_VALIDATE_FLOAT, DataTypeEnum::TYPE_FLOAT);
 
         return $this;
     }
@@ -516,8 +517,7 @@ class Globals implements GlobalsInterface
      */
     public function bool(): static
     {
-        $this->_iFilterType   = FILTER_VALIDATE_BOOLEAN;
-        $this->FilterDataType = DataTypeEnum::TYPE_BOOL;
+        $this->selectStandardFilter(FILTER_VALIDATE_BOOLEAN, DataTypeEnum::TYPE_BOOL);
 
         return $this;
     }
@@ -529,9 +529,7 @@ class Globals implements GlobalsInterface
      */
     public function ip(): static
     {
-        $this->_iFilterType   = FILTER_VALIDATE_IP;
-        $this->_iFilterFlags  = 0;
-        $this->FilterDataType = DataTypeEnum::TYPE_STRING;
+        $this->selectStandardFilter(FILTER_VALIDATE_IP, DataTypeEnum::TYPE_STRING);
 
         return $this;
     }
@@ -543,9 +541,11 @@ class Globals implements GlobalsInterface
      */
     public function ipv4(): static
     {
-        $this->_iFilterType   = FILTER_VALIDATE_IP;
-        $this->_iFilterFlags  = FILTER_FLAG_IPV4;
-        $this->FilterDataType = DataTypeEnum::TYPE_STRING;
+        $this->selectStandardFilter(
+            FILTER_VALIDATE_IP,
+            DataTypeEnum::TYPE_STRING,
+            FILTER_FLAG_IPV4,
+        );
 
         return $this;
     }
@@ -557,9 +557,11 @@ class Globals implements GlobalsInterface
      */
     public function ipv6(): static
     {
-        $this->_iFilterType   = FILTER_VALIDATE_IP;
-        $this->_iFilterFlags  = FILTER_FLAG_IPV6;
-        $this->FilterDataType = DataTypeEnum::TYPE_STRING;
+        $this->selectStandardFilter(
+            FILTER_VALIDATE_IP,
+            DataTypeEnum::TYPE_STRING,
+            FILTER_FLAG_IPV6,
+        );
 
         return $this;
     }
@@ -573,11 +575,7 @@ class Globals implements GlobalsInterface
      */
     public function callback(callable $callback): static
     {
-        $this->_iFilterType      = FILTER_CALLBACK;
-        $this->_iFilterFlags     = 0;
-        $this->FilterSpecialType = null;
-        $this->FilterDataType    = null;
-        $this->_callback         = $callback;
+        $this->selectStandardFilter(FILTER_CALLBACK, null, callback: $callback);
 
         return $this;
     }
@@ -600,8 +598,7 @@ class Globals implements GlobalsInterface
      */
     public function email(): static
     {
-        $this->_iFilterType   = FILTER_VALIDATE_EMAIL;
-        $this->FilterDataType = DataTypeEnum::TYPE_STRING;
+        $this->selectStandardFilter(FILTER_VALIDATE_EMAIL, DataTypeEnum::TYPE_STRING);
 
         return $this;
     }
@@ -613,8 +610,7 @@ class Globals implements GlobalsInterface
      */
     public function url(): static
     {
-        $this->_iFilterType   = FILTER_VALIDATE_URL;
-        $this->FilterDataType = DataTypeEnum::TYPE_STRING;
+        $this->selectStandardFilter(FILTER_VALIDATE_URL, DataTypeEnum::TYPE_STRING);
 
         return $this;
     }
@@ -626,8 +622,7 @@ class Globals implements GlobalsInterface
      */
     public function mac(): static
     {
-        $this->_iFilterType   = FILTER_VALIDATE_MAC;
-        $this->FilterDataType = DataTypeEnum::TYPE_STRING;
+        $this->selectStandardFilter(FILTER_VALIDATE_MAC, DataTypeEnum::TYPE_STRING);
 
         return $this;
     }
@@ -639,8 +634,7 @@ class Globals implements GlobalsInterface
      */
     public function string(): static
     {
-        $this->FilterSpecialType = SpecialFilterTypeEnum::FILTER_TAGS;
-        $this->FilterDataType    =  $this->FilterSpecialType->dataType();
+        $this->selectSpecialFilter(SpecialFilterTypeEnum::FILTER_TAGS);
 
         return $this;
     }
@@ -652,8 +646,7 @@ class Globals implements GlobalsInterface
      */
     public function stringStrict(): static
     {
-        $this->FilterSpecialType = SpecialFilterTypeEnum::FILTER_STRING_STRICT;
-        $this->FilterDataType    =  $this->FilterSpecialType->dataType();
+        $this->selectSpecialFilter(SpecialFilterTypeEnum::FILTER_STRING_STRICT);
 
         return $this;
     }
@@ -665,8 +658,7 @@ class Globals implements GlobalsInterface
      */
     public function base64(): static
     {
-        $this->FilterSpecialType = SpecialFilterTypeEnum::FILTER_BASE64;
-        $this->FilterDataType    =  $this->FilterSpecialType->dataType();
+        $this->selectSpecialFilter(SpecialFilterTypeEnum::FILTER_BASE64);
 
         return $this;
     }
@@ -678,8 +670,7 @@ class Globals implements GlobalsInterface
      */
     public function date(): static
     {
-        $this->FilterSpecialType = SpecialFilterTypeEnum::FILTER_DATE;
-        $this->FilterDataType    =  $this->FilterSpecialType->dataType();
+        $this->selectSpecialFilter(SpecialFilterTypeEnum::FILTER_DATE);
 
         return $this;
     }
@@ -691,8 +682,7 @@ class Globals implements GlobalsInterface
      */
     public function dateTime(): static
     {
-        $this->FilterSpecialType = SpecialFilterTypeEnum::FILTER_DATE_TIME;
-        $this->FilterDataType    =  $this->FilterSpecialType->dataType();
+        $this->selectSpecialFilter(SpecialFilterTypeEnum::FILTER_DATE_TIME);
 
         return $this;
     }
@@ -704,8 +694,7 @@ class Globals implements GlobalsInterface
      */
     public function stringSpecial(): static
     {
-        $this->_iFilterType   = FILTER_SANITIZE_SPECIAL_CHARS;
-        $this->FilterDataType = DataTypeEnum::TYPE_STRING;
+        $this->selectStandardFilter(FILTER_SANITIZE_SPECIAL_CHARS, DataTypeEnum::TYPE_STRING);
 
         return $this;
     }
@@ -717,8 +706,7 @@ class Globals implements GlobalsInterface
      */
     public function stringFull(): static
     {
-        $this->_iFilterType   = FILTER_SANITIZE_FULL_SPECIAL_CHARS;
-        $this->FilterDataType = DataTypeEnum::TYPE_STRING;
+        $this->selectStandardFilter(FILTER_SANITIZE_FULL_SPECIAL_CHARS, DataTypeEnum::TYPE_STRING);
 
         return $this;
     }
@@ -731,7 +719,9 @@ class Globals implements GlobalsInterface
      */
     public function json(bool $asArray): static
     {
-        $this->FilterSpecialType = $asArray ? SpecialFilterTypeEnum::FILTER_JSON_ARRAY : SpecialFilterTypeEnum::FILTER_JSON_OBJ;
+        $this->selectSpecialFilter(
+            $asArray ? SpecialFilterTypeEnum::FILTER_JSON_ARRAY : SpecialFilterTypeEnum::FILTER_JSON_OBJ,
+        );
 
         return $this;
     }
@@ -745,7 +735,9 @@ class Globals implements GlobalsInterface
      */
     public function uuid(bool $asBytes = false): static
     {
-        $this->FilterSpecialType = $asBytes ? SpecialFilterTypeEnum::FILTER_UUID_BINARY : SpecialFilterTypeEnum::FILTER_UUID_STRING;
+        $this->selectSpecialFilter(
+            $asBytes ? SpecialFilterTypeEnum::FILTER_UUID_BINARY : SpecialFilterTypeEnum::FILTER_UUID_STRING,
+        );
 
         return $this;
     }
@@ -757,11 +749,38 @@ class Globals implements GlobalsInterface
      */
     public function noFilter(): static
     {
-        $this->_iFilterType      = FILTER_DEFAULT;
-        $this->FilterSpecialType = null;
-        $this->FilterDataType    = null;
+        $this->selectStandardFilter(FILTER_DEFAULT, null);
 
         return $this;
+    }
+
+    /**
+     * Configure a filter_var filter and clear incompatible special-filter state.
+     */
+    protected function selectStandardFilter(
+        int $filterType,
+        ?DataTypeEnum $dataType,
+        int $flags = 0,
+        ?callable $callback = null,
+    ): void
+    {
+        $this->FilterSpecialType = null;
+        $this->FilterDataType    = $dataType;
+        $this->_iFilterType      = $filterType;
+        $this->_iFilterFlags     = $flags;
+        $this->_callback         = $callback;
+    }
+
+    /**
+     * Configure a special filter and clear incompatible filter_var state.
+     */
+    protected function selectSpecialFilter(SpecialFilterTypeEnum $filterType): void
+    {
+        $this->FilterSpecialType = $filterType;
+        $this->FilterDataType    = $filterType->dataType();
+        $this->_iFilterType      = 0;
+        $this->_iFilterFlags     = 0;
+        $this->_callback         = null;
     }
 
     /**
