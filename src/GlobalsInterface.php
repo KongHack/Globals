@@ -113,16 +113,14 @@ interface GlobalsInterface
     public function ip(): static;
 
     /**
-     * FILTER_FLAG_IPV4
-     * CAUTION: Does not fucking work
+     * FILTER_VALIDATE_IP with FILTER_FLAG_IPV4
      *
      * @return static
      */
     public function ipv4(): static;
 
     /**
-     * FILTER_FLAG_IPV6
-     * CAUTION: Does not fucking work
+     * FILTER_VALIDATE_IP with FILTER_FLAG_IPV6
      *
      * @return static
      */

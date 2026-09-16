@@ -45,6 +45,24 @@ final class FilterTest extends GlobalsTestCase
         self::assertSame('00:11:22:33:44:55', $globals->mac()->GET('mac'));
     }
 
+    public function testIpVersionFiltersAcceptOnlyTheRequestedVersion(): void
+    {
+        $_GET = [
+            'ipv4' => '192.0.2.1',
+            'ipv6' => '2001:db8::1',
+        ];
+        $globals = new Globals();
+
+        self::assertSame('192.0.2.1', $globals->ipv4()->GET('ipv4'));
+        self::assertSame('', $globals->ipv4()->GET('ipv6'));
+        self::assertSame('2001:db8::1', $globals->ipv6()->GET('ipv6'));
+        self::assertSame('', $globals->ipv6()->GET('ipv4'));
+
+        $globals->defaults(true);
+        self::assertSame('0.0.0.0', $globals->ipv4()->GET('missing'));
+        self::assertSame('::/0', $globals->ipv6()->GET('missing'));
+    }
+
     public function testStringFiltersApplyTheirDocumentedTransformations(): void
     {
         $_GET = [
@@ -111,9 +129,51 @@ final class FilterTest extends GlobalsTestCase
 
     public function testBase64FilterDecodesValidInput(): void
     {
-        $_GET['encoded'] = base64_encode('hello world');
+        $_GET = [
+            'encoded' => base64_encode('hello world'),
+            'zero' => base64_encode('0'),
+        ];
+        $globals = new Globals();
 
-        self::assertSame('hello world', (new Globals())->base64()->GET('encoded'));
+        self::assertSame('hello world', $globals->base64()->GET('encoded'));
+        self::assertSame('0', $globals->base64()->GET('zero'));
+    }
+
+    public function testCallbackFilterReturnsTheCallbacksNativeType(): void
+    {
+        $_GET['value'] = 'four';
+
+        self::assertSame(
+            4,
+            (new Globals())->callback(strlen(...))->GET('value'),
+        );
+    }
+
+    public function testCallbackFilterAppliesToArrayValues(): void
+    {
+        $_GET['values'] = ['first', 'second'];
+
+        self::assertSame(
+            ['FIRST', 'SECOND'],
+            (new Globals())->array()->callback(strtoupper(...))->GET('values'),
+        );
+    }
+
+    public function testFilterStateResetsWhenACallbackThrows(): void
+    {
+        $_GET = ['invalid' => 'value', 'next' => '42'];
+        $globals = new Globals();
+
+        try {
+            $globals
+                ->callback(static fn (): never => throw new \RuntimeException('Callback failed'))
+                ->GET('invalid');
+            self::fail('The callback should have thrown an exception.');
+        } catch (\RuntimeException $exception) {
+            self::assertSame('Callback failed', $exception->getMessage());
+        }
+
+        self::assertSame(42, $globals->GET('next'));
     }
 
     public function testNoFilterPreservesTheOriginalString(): void

@@ -26,14 +26,15 @@ use stdClass;
 class Globals implements GlobalsInterface
 {
     protected ?SpecialFilterTypeEnum $FilterSpecialType = null;
-    protected ?DataTypeEnum          $FilterDataType    = DataTypeEnum::TYPE_STRING;
+    protected ?DataTypeEnum          $FilterDataType    = null;
 
     protected int     $ArrayLevels  = 0;
     protected string  $_sGlobal     = '';
     protected bool    $_bFilter     = true;
     protected bool    $_bDefaults   = false;
-    protected int     $_iFilterType = 0;
-    protected bool    $_bUTF8       = true;
+    protected int     $_iFilterType  = 0;
+    protected int     $_iFilterFlags = 0;
+    protected bool    $_bUTF8        = true;
 
     /** @var callable|null */
     protected $_callback = null;
@@ -121,51 +122,50 @@ class Globals implements GlobalsInterface
     /**
      * GETTER
      *
-     * @param string $name
+     * @param string|int $name
      * @return null|mixed
      */
-    protected function _get(string $name): mixed
+    protected function _get(string|int $name): mixed
     {
         global ${$this->_sGlobal};
 
-        // EXIT
-        if (!isset(${$this->_sGlobal}[$name])) {
-            $return = $this->returnDefault();
-            $this->reset();
-
-            return $return;
-        }
-
-        $incoming = ${$this->_sGlobal}[$name];
-
-        if($this->ArrayLevels > 0) {
-            $incoming = $this->executeArrayFilter($incoming);
-            if(!is_array($incoming)) {
-                $incoming = [];
+        try {
+            // EXIT
+            if (!isset(${$this->_sGlobal}[$name])) {
+                return $this->returnDefault();
             }
-        } elseif(is_array($incoming)) {
-            if($this->FilterSpecialType) {
-                $incoming = $this->FilterSpecialType->defaultVal();
-            } elseif($this->FilterDataType) {
-                $incoming = $this->FilterDataType->cast('');
+
+            $incoming = ${$this->_sGlobal}[$name];
+
+            if($this->ArrayLevels > 0) {
+                $incoming = $this->executeArrayFilter($incoming);
+                if(!is_array($incoming)) {
+                    $incoming = [];
+                }
+            } elseif(is_array($incoming)) {
+                if($this->FilterSpecialType) {
+                    $incoming = $this->FilterSpecialType->defaultVal();
+                } elseif($this->FilterDataType) {
+                    $incoming = $this->FilterDataType->cast('');
+                } else {
+                    $incoming = null;
+                }
             } else {
-                $incoming = null;
+                $incoming = $this->executeFilter($incoming);
             }
-        } else {
-            $incoming = $this->executeFilter($incoming);
+
+            if($this->FilterDataType && !is_array($incoming)) {
+                $incoming = $this->FilterDataType->cast($incoming);
+            }
+
+            if($this->_bDefaults && $incoming === null) {
+                $incoming = $this->returnDefault();
+            }
+
+            return $incoming;
+        } finally {
+            $this->reset();
         }
-
-        if($this->FilterDataType && !is_array($incoming)) {
-            $incoming = $this->FilterDataType->cast($incoming);
-        }
-
-        if($this->_bDefaults && $incoming === null) {
-            $incoming = $this->returnDefault();
-        }
-
-        $this->reset($name == 'content_ind_logged_in');
-
-        return $incoming;
     }
 
     /**
@@ -225,7 +225,9 @@ class Globals implements GlobalsInterface
                 return '0000-00-00 00:00:00';
             })($var),
             SpecialFilterTypeEnum::FILTER_BASE64 => (function($var) {
-                return \base64_decode($var, true) ?: null;
+                $decoded = \base64_decode($var, true);
+
+                return $decoded === false ? null : $decoded;
             })($var),
             SpecialFilterTypeEnum::FILTER_STRING_STRICT => (function($var) {
                 $var = \preg_replace("/[^[:alnum:] '\\-]/", '', $var);
@@ -261,12 +263,12 @@ class Globals implements GlobalsInterface
 
         // filter_var Filters
         if($this->_iFilterType === FILTER_CALLBACK) {
-            $var = filter_var($var, $this->_iFilterType, $this->_callback);
+            $var = filter_var($var, $this->_iFilterType, ['options' => $this->_callback]);
         } elseif ($this->_iFilterType > 0) {
             if(!is_scalar($var)) {
                 $var = null;
             } else {
-                $var = filter_var($var, $this->_iFilterType);
+                $var = filter_var($var, $this->_iFilterType, $this->_iFilterFlags);
             }
         }
 
@@ -322,11 +324,11 @@ class Globals implements GlobalsInterface
     /**
      * SETTER
      *
-     * @param string $name
+     * @param string|int $name
      * @param mixed  $value
      * @return bool
      */
-    protected function _set(string $name, mixed $value): bool
+    protected function _set(string|int $name, mixed $value): bool
     {
         global ${$this->_sGlobal};
 
@@ -454,13 +456,13 @@ class Globals implements GlobalsInterface
             return null;
         }
 
-        // Super cheap hack! GAH!
-        if (empty($arguments[0])) {
+        // Select the global for batch access when no key was supplied.
+        if (!array_key_exists(0, $arguments)) {
             return $this;
         }
 
         // SET
-        if (isset($arguments[1])) {
+        if (array_key_exists(1, $arguments)) {
             return $this->_set($arguments[0], $arguments[1]);
         }
 
@@ -528,34 +530,35 @@ class Globals implements GlobalsInterface
     public function ip(): static
     {
         $this->_iFilterType   = FILTER_VALIDATE_IP;
+        $this->_iFilterFlags  = 0;
         $this->FilterDataType = DataTypeEnum::TYPE_STRING;
 
         return $this;
     }
 
     /**
-     * FILTER_FLAG_IPV4
-     * CAUTION: Does not fucking work
+     * FILTER_VALIDATE_IP with FILTER_FLAG_IPV4
      *
      * @return static
      */
     public function ipv4(): static
     {
-        $this->_iFilterType   = FILTER_FLAG_IPV4;
+        $this->_iFilterType   = FILTER_VALIDATE_IP;
+        $this->_iFilterFlags  = FILTER_FLAG_IPV4;
         $this->FilterDataType = DataTypeEnum::TYPE_STRING;
 
         return $this;
     }
 
     /**
-     * FILTER_FLAG_IPV6
-     * CAUTION: Does not fucking work
+     * FILTER_VALIDATE_IP with FILTER_FLAG_IPV6
      *
      * @return static
      */
     public function ipv6(): static
     {
-        $this->_iFilterType   = FILTER_FLAG_IPV6;
+        $this->_iFilterType   = FILTER_VALIDATE_IP;
+        $this->_iFilterFlags  = FILTER_FLAG_IPV6;
         $this->FilterDataType = DataTypeEnum::TYPE_STRING;
 
         return $this;
@@ -570,8 +573,11 @@ class Globals implements GlobalsInterface
      */
     public function callback(callable $callback): static
     {
-        $this->_iFilterType = FILTER_CALLBACK;
-        $this->_callback    = $callback;
+        $this->_iFilterType      = FILTER_CALLBACK;
+        $this->_iFilterFlags     = 0;
+        $this->FilterSpecialType = null;
+        $this->FilterDataType    = null;
+        $this->_callback         = $callback;
 
         return $this;
     }
@@ -767,6 +773,7 @@ class Globals implements GlobalsInterface
         $this->FilterDataType    = null;
         $this->ArrayLevels       = 0;
         $this->_iFilterType      = 0;
+        $this->_iFilterFlags     = 0;
         $this->_callback         = null;
     }
 
@@ -797,11 +804,11 @@ class Globals implements GlobalsInterface
                 return 0.0;
             case FILTER_VALIDATE_BOOLEAN:
                 return false;
-            case FILTER_FLAG_IPV4:
             case FILTER_VALIDATE_IP:
+                if($this->_iFilterFlags === FILTER_FLAG_IPV6) {
+                    return '::/0';
+                }
                 return '0.0.0.0';
-            case FILTER_FLAG_IPV6:
-                return '::/0';
             case FILTER_VALIDATE_URL:
             case FILTER_SANITIZE_SPECIAL_CHARS:
             case FILTER_SANITIZE_FULL_SPECIAL_CHARS:

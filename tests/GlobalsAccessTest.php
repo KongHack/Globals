@@ -21,6 +21,24 @@ final class GlobalsAccessTest extends GlobalsTestCase
         self::assertTrue($globals->bool()->SESSION('authenticated'));
     }
 
+    public function testEmptyAndNumericZeroKeysCanBeRetrieved(): void
+    {
+        $_GET = [0 => 'first', '' => 'empty'];
+        $globals = new Globals();
+
+        self::assertSame('first', $globals->noFilter()->GET(0));
+        self::assertSame('empty', $globals->noFilter()->GET(''));
+    }
+
+    public function testNullCanBeAssignedToAGlobal(): void
+    {
+        $globals = new Globals();
+
+        self::assertTrue($globals->GET('nullable', null));
+        self::assertArrayHasKey('nullable', $_GET);
+        self::assertNull($_GET['nullable']);
+    }
+
     public function testCallingGlobalWithoutAKeySelectsItForBatchAccess(): void
     {
         $_GET = ['count' => '5', 'enabled' => 'true', 'code' => '007'];
@@ -60,6 +78,15 @@ final class GlobalsAccessTest extends GlobalsTestCase
     public function testMissingValuesReturnNullWhenDefaultsAreDisabled(): void
     {
         self::assertNull((new Globals())->int()->GET('missing'));
+    }
+
+    public function testAutomaticFilteringIsStableAcrossRepeatedReads(): void
+    {
+        $_GET['value'] = '42';
+        $globals = new Globals();
+
+        self::assertSame(42, $globals->GET('value'));
+        self::assertSame(42, $globals->GET('value'));
     }
 
     public function testArrayFilteringAppliesAFilterToEveryValue(): void
