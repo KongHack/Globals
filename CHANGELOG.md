@@ -4,8 +4,29 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/KongHack/Globals)
-- @GameCharmer Fix JSON filters to safely return the requested empty container for scalar, invalid, or mismatched JSON values instead of throwing a `TypeError`
-- @GameCharmer Fix chained filter selection so the most recently selected filter replaces stale filter state
+
+## [4.1.0](https://github.com/KongHack/Globals/releases/tag/4.1.0)
+
+### Changed
+
+- Raise the minimum supported PHP version to 8.4 and update `ramsey/uuid` to `^4.9`
+- Update `GlobalsInterface` to include `getKeys()`, `base64()`, and array filter depth
+- Rewrite and expand the project documentation
+
+### Fixed
+
+- Fix IPv4 and IPv6 filters to validate only the requested address family
+- Fix callback filters, preserve callback return types, and reset filter state when callbacks throw
+- Support empty-string and integer-zero superglobal keys and allow assigning `null` values
+- Fix Base64 filtering to preserve valid decoded values such as `"0"` and an empty string
+- Correct octal filters and defaults to return integers
+- Correct `stringStrict()` defaults to return strings
+- Fix JSON filters to return the requested empty container for scalar, invalid, or mismatched JSON values
+- Ensure the most recently selected filter replaces stale filter state
+
+### Development
+
+- Add PHPUnit coverage and GitHub Actions for PHP 8.4 and 8.5
 
 
 ## [4.0.6](https://github.com/KongHack/Globals/releases/tag/4.0.6)

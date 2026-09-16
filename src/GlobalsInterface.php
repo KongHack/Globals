@@ -23,6 +23,14 @@ namespace GCWorld\Globals;
 interface GlobalsInterface
 {
     /**
+     * Get the keys available in a global array.
+     *
+     * @param string $name Global name
+     * @return array|null
+     */
+    public function getKeys(string $name): ?array;
+
+    /**
      * PUBLIC AUTO FILTER VAR
      *
      * @param mixed $var
@@ -138,9 +146,10 @@ interface GlobalsInterface
     /**
      * FILTER_ARRAY
      *
+     * @param int $levels
      * @return static
      */
-    public function array(): static;
+    public function array(int $levels = 1): static;
 
     /**
      * FILTER_VALIDATE_EMAIL
@@ -197,6 +206,13 @@ interface GlobalsInterface
      * @return static
      */
     public function stringStrict(): static;
+
+    /**
+     * FILTER_BASE64
+     *
+     * @return static
+     */
+    public function base64(): static;
 
     /**
      * FILTER_SANITIZE_FULL_SPECIAL_CHARS

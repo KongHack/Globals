@@ -79,6 +79,27 @@ final class FilterTest extends GlobalsTestCase
         self::assertSame('&lt;b&gt;Tom &amp; Jerry&lt;/b&gt;', $globals->stringFull()->GET('full'));
     }
 
+    public function testStrictStringFilterUsesStringDefaults(): void
+    {
+        $_GET['array'] = ['unexpected'];
+        $globals = new Globals();
+        $globals->defaults(true);
+
+        self::assertSame('', $globals->stringStrict()->GET('missing'));
+        self::assertSame('', $globals->stringStrict()->GET('array'));
+    }
+
+    public function testOctalFilterReturnsAnInteger(): void
+    {
+        $_GET['octal'] = '10';
+        $globals = new Globals();
+
+        self::assertSame(8, $globals->octal()->GET('octal'));
+
+        $globals->defaults(true);
+        self::assertSame(0, $globals->octal()->GET('missing'));
+    }
+
     public function testDateFiltersNormalizeValidValuesAndDefaultInvalidValues(): void
     {
         $_GET = [

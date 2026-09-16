@@ -23,10 +23,11 @@ enum SpecialFilterTypeEnum: int
     public function dataType(): ?DataTypeEnum
     {
         return match($this) {
-            self::FILTER_OCTAL,
+            self::FILTER_OCTAL => DataTypeEnum::TYPE_INT,
             self::FILTER_TAGS,
             self::FILTER_DATE,
             self::FILTER_BASE64,
+            self::FILTER_STRING_STRICT,
             self::FILTER_DATE_TIME => DataTypeEnum::TYPE_STRING,
             default                => null,
         };
@@ -64,6 +65,7 @@ enum SpecialFilterTypeEnum: int
         return match($this) {
             self::FILTER_OCTAL      => 0,
             self::FILTER_TAGS       => '',
+            self::FILTER_STRING_STRICT => '',
             self::FILTER_DATE       => '0000-00-00',
             self::FILTER_DATE_TIME  => '0000-00-00 00:00:00',
             self::FILTER_JSON_OBJ   => new \stdClass(),
