@@ -1,5 +1,12 @@
 # GCWorld Globals
 
+![Packagist](https://img.shields.io/packagist/dm/gcworld/globals.svg)
+![Packagist](https://img.shields.io/packagist/dt/gcworld/globals.svg)
+
+![Packagist PHP](https://img.shields.io/packagist/php-v/gcworld/globals.svg)
+![Packagist](https://img.shields.io/packagist/v/gcworld/globals.svg)
+![GitHub](https://img.shields.io/github/tag/konghack/globals.svg)
+
 GCWorld Globals provides a typed, filterable access layer for PHP superglobals.
 It supports automatic scalar coercion, explicit validation and sanitization,
 recursive array filtering, JSON decoding, UUID conversion, and configurable
